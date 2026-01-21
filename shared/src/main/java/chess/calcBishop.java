@@ -46,7 +46,7 @@ public class calcBishop extends pieceMovesCalculator {
             //TOP RIGHT
             while (availableSpotTR == null && topRight.getRow() > 0 && topRight.getRow() < 9 && topRight.getColumn() < 9 && topRight.getColumn() > 0 ){
 
-                availableSpotTR = board.getPiece(topRight);
+                //availableSpotTR = board.getPiece(topRight);
 
                 //Possible move
                 ChessMove pmoveTR = new ChessMove(position,topRight,null);
@@ -55,6 +55,11 @@ public class calcBishop extends pieceMovesCalculator {
 
                 //Updating Process
                 topRight = new ChessPosition(topRight.getRow()+1, topRight.getColumn()+1 );
+                if(isInside(topRight)){
+                    availableSpotTR = board.getPiece(topRight);
+                }else{
+                    break;
+                }
 
             }
             //Checking if there is a piece blocking (Top right)
@@ -69,7 +74,7 @@ public class calcBishop extends pieceMovesCalculator {
             //TOP LEFT
             while (availableSpotTL == null && topLeft.getRow() > 0 && topLeft.getRow() < 9 && topLeft.getColumn() < 9 && topLeft.getColumn() > 0 ){
 
-                availableSpotTL = board.getPiece(topLeft);
+                //availableSpotTL = board.getPiece(topLeft);
 
                 //Possible move
                 ChessMove pmoveTL = new ChessMove(position,topLeft,null);
@@ -78,6 +83,11 @@ public class calcBishop extends pieceMovesCalculator {
 
                 //Updating Process
                 topLeft = new ChessPosition(topLeft.getRow()+1, topLeft.getColumn()-1 );
+                if(isInside(topLeft)){
+                    availableSpotTL = board.getPiece(topLeft);
+                }else{
+                    break;
+                }
             }
             //Checking if there is a piece blocking (Top LEFT)
             if (availableSpotTL != null && availableSpotTL.getTeamColor() != board.getPiece(position).getTeamColor()){
@@ -90,16 +100,19 @@ public class calcBishop extends pieceMovesCalculator {
             //BOTTOM RIGHT
             while (availableSpotBR == null && bottomRight.getRow() > 0 && bottomRight.getRow() < 9 && bottomRight.getColumn() < 9 && bottomRight.getColumn() > 0 ){
 
-                availableSpotBR = board.getPiece(bottomRight);
+                //availableSpotBR = board.getPiece(bottomRight);
 
                 //Possible move
                 ChessMove pmoveBR = new ChessMove(position,bottomRight,null);
                 //Adding it to the final list
                 finalList.add(pmoveBR);
-
                 //Updating Process
                 bottomRight = new ChessPosition(bottomRight.getRow()-1, bottomRight.getColumn()+1 );
-
+                if(isInside(bottomRight)){
+                    availableSpotBR = board.getPiece(bottomRight);
+                }else{
+                    break;
+                }
             }
             //Checking if there is a piece blocking (BottomRight)
             if (availableSpotBR != null && availableSpotBR.getTeamColor() != board.getPiece(position).getTeamColor()){
@@ -112,7 +125,7 @@ public class calcBishop extends pieceMovesCalculator {
             //BOTTOM LEFT
             while (availableSpotBL == null && bottomLeft.getRow() > 0 && bottomLeft.getRow() < 9 && bottomLeft.getColumn() < 9 && bottomLeft.getColumn() > 0 ){
 
-                availableSpotBL = board.getPiece(bottomLeft);
+                //availableSpotBL = board.getPiece(bottomLeft);
 
                 //Possible move
                 ChessMove pmoveBL = new ChessMove(position,bottomLeft,null);
@@ -121,6 +134,11 @@ public class calcBishop extends pieceMovesCalculator {
 
                 //Updating Process
                 bottomLeft = new ChessPosition(bottomLeft.getRow()-1, bottomLeft.getColumn()-1 );
+                if(isInside(bottomLeft)){
+                    availableSpotBL = board.getPiece(bottomLeft);
+                }else{
+                    break;
+                }
 
             }
             //Checking if there is a piece blocking (Top right)
