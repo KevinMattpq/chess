@@ -39,7 +39,7 @@ public class calcBishop extends pieceMovesCalculator {
 //        ChessPiece availableSpotBL = board.getPiece(bottomLeft);
 
 
-        //Checkins is inside boar
+        //Checkins is inside board
         if (isInside(topRight)){
             ChessPiece availableSpotTR = board.getPiece(topRight);
 
@@ -78,7 +78,6 @@ public class calcBishop extends pieceMovesCalculator {
 
                 //Updating Process
                 topLeft = new ChessPosition(topLeft.getRow()+1, topLeft.getColumn()-1 );
-
             }
             //Checking if there is a piece blocking (Top LEFT)
             if (availableSpotTL != null && availableSpotTL.getTeamColor() != board.getPiece(position).getTeamColor()){
