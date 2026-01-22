@@ -72,6 +72,15 @@ public class ChessPiece {
         if (piece.getPieceType() == PieceType.BISHOP) {
             return new calcBishop().calculateMoves(board,myPosition);
         }
+        if(piece.getPieceType() == PieceType.ROOK){
+            return new calcRook().calculateMoves(board,myPosition);
+        }
+        if(piece.getPieceType() == PieceType.KING){
+            return new calcKing().calculateMoves(board,myPosition);
+        }
+        if(piece.getPieceType() == PieceType.QUEEN){
+            return new calcQueen().calculateMoves(board,myPosition);
+        }
         return List.of();
     }
 }
