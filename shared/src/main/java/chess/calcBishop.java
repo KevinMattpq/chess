@@ -15,6 +15,7 @@ public class calcBishop extends pieceMovesCalculator {
             listOfMoves.add(pmoveX);
 
             //Update Section
+            //TOP RIGHT
             if (row == 1 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 1);
                 if (isInside(positionX)) {
@@ -23,6 +24,7 @@ public class calcBishop extends pieceMovesCalculator {
                     break;
                 }
             }
+            //TOP LEFT
             if(row == 1 && col == -1){
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() - 1);
                 if (isInside(positionX)) {
@@ -31,6 +33,7 @@ public class calcBishop extends pieceMovesCalculator {
                     break;
                 }
             }
+            //BOTTOM RIGHT
             if(row == -1 && col == 1){
                 positionX = new ChessPosition(positionX.getRow()-1,positionX.getColumn()+1);
                 if (isInside(positionX)) {
@@ -39,6 +42,7 @@ public class calcBishop extends pieceMovesCalculator {
                     break;
                 }
             }
+            //BOTTOM LEFT
             if(row == -1 && col == -1){
                 positionX = new ChessPosition(positionX.getRow()-1,positionX.getColumn()-1);
                 if (isInside(positionX)) {
