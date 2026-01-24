@@ -4,53 +4,54 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class calcPawn extends pieceMovesCalculator{
+    private static final ChessPiece.PieceType[] promotionTypes = {
+            ChessPiece.PieceType.QUEEN,
+            ChessPiece.PieceType.ROOK,
+            ChessPiece.PieceType.BISHOP,
+            ChessPiece.PieceType.KNIGHT
+    };
+
     //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
-    public void moveChecker (Collection listOfMoves, ChessBoard board, ChessPiece availableSpotX, ChessPosition currentPosition, ChessPosition positionX, int row, int col){
+    public void moveChecker (Collection listOfMoves, ChessBoard board, ChessPosition currentPosition, int row, int col) {
+        ChessPosition positionX = new ChessPosition(currentPosition.getRow()+row, currentPosition.getColumn()+col);
+        if (!isInside(positionX)) {
+            return;
+        }
+        ChessPiece availableSpotX = board.getPiece(positionX);
+        ChessPiece pawn = board.getPiece(currentPosition);
+        ChessGame.TeamColor pawnColor = pawn.getTeamColor();
+        int initialRow = pawnColor == ChessGame.TeamColor.WHITE ? 2 : 7;
 
-        if(availableSpotX == null && positionX.getRow() > 0 && positionX.getRow() < 9 && positionX.getColumn() < 9 && positionX.getColumn() > 0) {
-            //Possible Move
-            ChessMove pmoveX = new ChessMove(currentPosition, positionX, null);
-            //Adding it to the final list
-            listOfMoves.add(pmoveX);
-
-            //Update Section
-            //TOP RIGHT
-            if (row == 1 && col == 0) {
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 0);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
+        if (col==0){
+            if (availableSpotX != null) {
+                return;
             }
-
-            //TOP RIGHT
-            if (row == 1 && col == 1) {
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
+            if(Math.abs(row) == 2 &&
+                    (currentPosition.getRow() != initialRow ||
+                    board.getPiece(new ChessPosition(currentPosition.getRow()+(row/2), currentPosition.getColumn())) != null)){
+                return;
             }
-            //TOP LEFT
-            if(row == 1 && col == -1){
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() - 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
+        }else {
+            if (availableSpotX == null || availableSpotX.getTeamColor() == board.getPiece(currentPosition).getTeamColor()){
+                return;
             }
         }
-        //IN CASE A PIECE IS BLOCKING
-        if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
-            ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
+        int opponentIrow = pawnColor == ChessGame.TeamColor.BLACK ? 2 : 7;
+        if(currentPosition.getRow() == opponentIrow){
+            for (ChessPiece.PieceType pType : promotionTypes ){
+                ChessMove pmoveX = new ChessMove(currentPosition, positionX, pType);
+                listOfMoves.add(pmoveX);
+            }
+        }else {
+            ChessMove pmoveX = new ChessMove(currentPosition, positionX, null);
             listOfMoves.add(pmoveX);
         }
     }
 
+
     //Checking that position is inside board
     public boolean isInside(ChessPosition position){
-        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
-            return true;
-        }else{
-            return false;
-        }
+        return position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9;
     }
 
     @Override
@@ -58,30 +59,21 @@ public class calcPawn extends pieceMovesCalculator{
         //Final List
         Collection finalList = new ArrayList();
 
-        //Variable that has the position TOP
-        ChessPosition top = new ChessPosition(position.getRow()+1, position.getColumn()+0);
-        //Variable that has the position TOP RIGHT
-        ChessPosition topRight = new ChessPosition(position.getRow()+1, position.getColumn()+1);
-        //Variable that has the position TOP LEFT from bishop
-        ChessPosition topLeft = new ChessPosition(position.getRow()+1, position.getColumn()-1);
+        ChessPiece pawn = board.getPiece(position);
+        ChessGame.TeamColor pawnColor = pawn.getTeamColor();
+
+        int rowMod = pawnColor == ChessGame.TeamColor.WHITE ? +1 : -1;
+
 
         //TOP
-        if (isInside(top)){
-            ChessPiece availableSpotT = board.getPiece(top);
-            moveChecker(finalList,board, availableSpotT,position,top,1,0);
-        }
-
+        moveChecker(finalList,board, position,rowMod,0);
+        //TOP2
+        moveChecker(finalList,board, position,rowMod*2,0);
         //TOP RIGHT
-        if (isInside(topRight)){
-            ChessPiece availableSpotTR = board.getPiece(topRight);
-            moveChecker(finalList,board, availableSpotTR,position,topRight,1,1);
-        }
-
+        moveChecker(finalList,board, position,rowMod,1);
         //TOP LEFT
-        if(isInside(topLeft)){
-            ChessPiece availableSpotTL = board.getPiece(topLeft);
-            moveChecker(finalList,board, availableSpotTL,position,topLeft,1,-1);
-        }
+        moveChecker(finalList,board, position,rowMod,-1);
+
         return finalList;
     }
 }
