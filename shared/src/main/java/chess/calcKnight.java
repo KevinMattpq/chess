@@ -16,61 +16,35 @@ public class calcKnight extends pieceMovesCalculator {
             //TOP RIGHT
             if (row == 2 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() + 2, positionX.getColumn() + 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //TOP LEFT
             if (row == 2 && col == -1) {
                 positionX = new ChessPosition(positionX.getRow() + 2, positionX.getColumn() - 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
 
             //RIGHT-UP
             if (row == 1 && col == 2) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 2);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
-
             //RIGHT-DOWN
             if (row == -1 && col == 2) {
                 positionX = new ChessPosition(positionX.getRow() -1, positionX.getColumn() + 2);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //LEFT-UP
             if (row == 1 && col == -2) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() - 2);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
-
             //lEFT-DOWN
             if (row == -1 && col == -2) {
                 positionX = new ChessPosition(positionX.getRow() -1, positionX.getColumn() - 2);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //BOTTOM RIGHT
             if (row == -2 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() - 2, positionX.getColumn() + 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //BOTTOM LEFT
             if (row == -2 && col == -1) {
                 positionX = new ChessPosition(positionX.getRow() - 2, positionX.getColumn() - 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
         }
 
@@ -114,17 +88,14 @@ public class calcKnight extends pieceMovesCalculator {
         ChessPosition bottomLeft = new ChessPosition(position.getRow()-2, position.getColumn()-1);
 
 
-
         //TOP RIGHT
         //Checkins is inside board
         if (isInside(topRight)){
-
             ChessPiece availableSpotTR = board.getPiece(topRight);
             moveChecker(finalList,board, availableSpotTR,position,topRight,2,1);
         }
         //TOP LEFT
         if (isInside(topLeft)){
-
             ChessPiece availableSpotTL = board.getPiece(topLeft);
             moveChecker(finalList,board, availableSpotTL,position,topLeft,2,-1);
         }
