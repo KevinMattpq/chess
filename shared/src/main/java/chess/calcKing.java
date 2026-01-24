@@ -16,58 +16,34 @@ public class calcKing extends pieceMovesCalculator {
             //TOP
             if (row == 1 && col == 0) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 0);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //TOP RIGHT
             if (row == 1 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //TOP LEFT
             if (row == 1 && col == -1) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() - 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //BOTTOM
             if (row == -1 && col == 0) {
                 positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() + 0);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //BOTTOM RIGHT
             if (row == -1 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() + 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //BOTTOM LEFT
             if (row == -1 && col == -1) {
                 positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() - 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //RIGHT
             if (row == 0 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() + 0, positionX.getColumn() + 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
             //LEFT
             if (row == 0 && col == -1) {
                 positionX = new ChessPosition(positionX.getRow() + 0, positionX.getColumn() - 1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                }
             }
         }
 
