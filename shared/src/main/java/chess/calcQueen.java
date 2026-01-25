@@ -8,7 +8,7 @@ public class calcQueen extends pieceMovesCalculator {
     //moveChecker FUNCTION - I used this one for all of the possible moves (top,topRight,topLeft,bottom,bottomRight,bottomLeft,right, left)
     public void moveChecker (Collection listOfMoves,ChessBoard board, ChessPiece availableSpotX,ChessPosition currentPosition, ChessPosition positionX, int row, int col){
 
-        while(availableSpotX == null && positionX.getRow() > 0 && positionX.getRow() < 9 && positionX.getColumn() < 9 && positionX.getColumn() > 0) {
+        while(availableSpotX == null) {
             //Possible Move
             ChessMove pmoveX = new ChessMove(currentPosition, positionX, null);
             //Adding it to the final list
