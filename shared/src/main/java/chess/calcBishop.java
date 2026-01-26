@@ -6,7 +6,10 @@ import java.util.Collection;
 public class calcBishop extends pieceMovesCalculator {
 
     //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
-    public void moveChecker (Collection listOfMoves,ChessBoard board, ChessPiece availableSpotX,ChessPosition currentPosition, ChessPosition positionX, int row, int col){
+    public void moveChecker (Collection listOfMoves,ChessBoard board,ChessPosition currentPosition, ChessPosition positionX, int row, int col){
+        //Possible New Position
+        ChessPiece availableSpotX = board.getPiece(positionX);
+
 
         while(availableSpotX == null) {
             //Possible Move
@@ -86,27 +89,22 @@ public class calcBishop extends pieceMovesCalculator {
         //TOP RIGHT
         //Checkins is inside board
         if (isInside(topRight)){
-
-            ChessPiece availableSpotTR = board.getPiece(topRight);
-            moveChecker(finalList,board, availableSpotTR,position,topRight,1,1);
+            moveChecker(finalList,board,position,topRight,1,1);
         }
 
         //TOP LEFT
         if(isInside(topLeft)){
-            ChessPiece availableSpotTL = board.getPiece(topLeft);
-            moveChecker(finalList,board, availableSpotTL,position,topLeft,1,-1);
+            moveChecker(finalList,board,position,topLeft,1,-1);
         }
 
         //BOTTOM RIGHT
         if(isInside(bottomRight)){
-            ChessPiece availableSpotBR = board.getPiece(bottomRight);
-            moveChecker(finalList,board, availableSpotBR,position,bottomRight,-1,1);
+            moveChecker(finalList,board,position,bottomRight,-1,1);
         }
 
         //BOTTOM LEFT
         if (isInside(bottomLeft)){
-            ChessPiece availableSpotBL = board.getPiece(bottomLeft);
-            moveChecker(finalList,board, availableSpotBL,position,bottomLeft,-1,-1);
+            moveChecker(finalList,board,position,bottomLeft,-1,-1);
         }
         return finalList;
     }

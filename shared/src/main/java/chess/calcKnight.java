@@ -5,7 +5,10 @@ import java.util.Collection;
 
 public class calcKnight extends pieceMovesCalculator {
     //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
-    public void moveChecker(Collection listOfMoves, ChessBoard board, ChessPiece availableSpotX, ChessPosition currentPosition, ChessPosition positionX, int row, int col) {
+    public void moveChecker(Collection listOfMoves, ChessBoard board, ChessPosition currentPosition, ChessPosition positionX, int row, int col) {
+        //Possible New Position
+        ChessPiece availableSpotX = board.getPiece(positionX);
+
         if (availableSpotX == null) {
             //Possible Move
             ChessMove pmoveX = new ChessMove(currentPosition, positionX, null);
@@ -91,49 +94,41 @@ public class calcKnight extends pieceMovesCalculator {
         //TOP RIGHT
         //Checkins is inside board
         if (isInside(topRight)){
-            ChessPiece availableSpotTR = board.getPiece(topRight);
-            moveChecker(finalList,board, availableSpotTR,position,topRight,2,1);
+            moveChecker(finalList,board,position,topRight,2,1);
         }
         //TOP LEFT
         if (isInside(topLeft)){
-            ChessPiece availableSpotTL = board.getPiece(topLeft);
-            moveChecker(finalList,board, availableSpotTL,position,topLeft,2,-1);
+            moveChecker(finalList,board,position,topLeft,2,-1);
         }
 
 
         //TOP RIGHT UP
         if(isInside(rightUp)){
-            ChessPiece availableSpotRU = board.getPiece(rightUp);
-            moveChecker(finalList,board, availableSpotRU,position,rightUp,1,2);
+            moveChecker(finalList,board,position,rightUp,1,2);
         }
 
         //RIGHT DOWN
         if(isInside(rightDown)){
-            ChessPiece availableSpotRD = board.getPiece(rightDown);
-            moveChecker(finalList,board, availableSpotRD,position,rightDown,-1,2);
+            moveChecker(finalList,board,position,rightDown,-1,2);
         }
 
         // LEFT UP
         if(isInside(leftUp)){
-            ChessPiece availableSpotLU = board.getPiece(leftUp);
-            moveChecker(finalList,board, availableSpotLU,position,leftUp,1,-2);
+            moveChecker(finalList,board,position,leftUp,1,-2);
         }
 
         // LEFT DOWN
         if (isInside(leftDown)){
-            ChessPiece availableSpotLD = board.getPiece(leftDown);
-            moveChecker(finalList,board, availableSpotLD,position,leftDown,-1,-2);
+            moveChecker(finalList,board,position,leftDown,-1,-2);
         }
 
         //BOTTOM RIGHT
         if(isInside(bottomRight)){
-            ChessPiece availableSpotBR = board.getPiece(bottomRight);
-            moveChecker(finalList,board, availableSpotBR,position,bottomRight,-2,1);
+            moveChecker(finalList,board,position,bottomRight,-2,1);
         }
         //BOTTOM LEFT
         if (isInside(bottomLeft)){
-            ChessPiece availableSpotBL = board.getPiece(bottomLeft);
-            moveChecker(finalList,board, availableSpotBL,position,bottomLeft,-2,-1);
+            moveChecker(finalList,board,position,bottomLeft,-2,-1);
         }
         return finalList;
     }
