@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -87,12 +88,49 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+            //Loop to get King's position
             ChessPosition kingPosition;
             for(int i= 1; i< 9; i++){
                 for(int j = 1; j < 9; j++){
                     ChessPiece piece = board.getPiece(new ChessPosition(i,j));
-                    if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor()== teamColor){
+                    if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor){
                         kingPosition = new ChessPosition(i,j);
+                    }
+                }
+            }
+//            ChessPiece.PieceType[] pTypes ={
+//                    ChessPiece.PieceType.PAWN,
+//                    ChessPiece.PieceType.KING,
+//                    ChessPiece.PieceType.QUEEN,
+//                    ChessPiece.PieceType.ROOK,
+//                    ChessPiece.PieceType.BISHOP,
+//                    ChessPiece.PieceType.KNIGHT
+//            };
+            //Loop to check if opponent pieces have the position of the king as possible move
+            for(int i= 1; i< 9; i++){
+                for(int j = 1; j < 9; j++){
+                    //Getting each piece
+                    ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                    //Checking if it is an opponent
+                    if(piece.getTeamColor() != teamColor){
+                        if(piece.getPieceType() == ChessPiece.PieceType.PAWN ){
+
+                        }
+                        if(piece.getPieceType() == ChessPiece.PieceType.KNIGHT ){
+
+                        }
+                        if(piece.getPieceType() == ChessPiece.PieceType.ROOK ){
+
+                        }
+                        if(piece.getPieceType() == ChessPiece.PieceType.BISHOP ){
+
+                        }
+                        if(piece.getPieceType() == ChessPiece.PieceType.KING ){
+
+                        }
+                        if(piece.getPieceType() == ChessPiece.PieceType.QUEEN ){
+
+                        }
                     }
                 }
             }
