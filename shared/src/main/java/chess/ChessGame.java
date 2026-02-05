@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class ChessGame {
     private final ChessBoard board;
-    private ChessGame.TeamColor teamTurn;
+    private TeamColor teamTurn;
 
     public ChessGame() {
         this.board = new ChessBoard();
@@ -31,6 +31,14 @@ public class ChessGame {
             }
         }
         return boarCopy;
+    }
+
+    //Deep Copy of ChessGame
+    public  ChessGame chessGameCopy (){
+        ChessGame chessGameCopy = new ChessGame();
+        chessGameCopy.setTeamTurn(teamTurn);
+        chessGameCopy.setBoard(boardCopy());
+        return chessGameCopy;
     }
 
     /**
@@ -65,10 +73,37 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece piece  = board.getPiece(startPosition);
-        Collection moves = piece.pieceMoves(board,startPosition);
+        //The final list of moves if they are valid
+        Collection finalList = new ArrayList<>();
 
-        return moves;
+        //Piece
+        ChessPiece piece  = board.getPiece(startPosition);
+        //Checking if there is a piece
+        if(piece == null){
+            return  null;
+        }
+        //If there is get its list of possible moves
+        Collection<ChessMove> moves = piece.pieceMoves(board,startPosition);
+
+        for(ChessMove a: moves){
+            //Making moves inside my copy of ChessGame
+            ChessGame tempChessGameCopy = chessGameCopy();
+            //Assuming my function works
+
+
+            //Check if king is in Check
+            boolean isKingGood = tempChessGameCopy.isInCheck(piece.getTeamColor());
+
+            if(!isKingGood){
+                finalList.add(a);
+            }
+        }
+        return finalList;
+    }
+
+    //Helper Function
+    public void justMakeMove(ChessMove a){
+
     }
 
     /**
@@ -89,7 +124,10 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
             //Loop to get King's position
-            ChessPosition kingPosition;
+            ChessPosition kingPosition = null;
+            boolean kingInCheck = false;
+
+            //Finding the king's position
             for(int i= 1; i< 9; i++){
                 for(int j = 1; j < 9; j++){
                     ChessPiece piece = board.getPiece(new ChessPosition(i,j));
@@ -98,14 +136,6 @@ public class ChessGame {
                     }
                 }
             }
-//            ChessPiece.PieceType[] pTypes ={
-//                    ChessPiece.PieceType.PAWN,
-//                    ChessPiece.PieceType.KING,
-//                    ChessPiece.PieceType.QUEEN,
-//                    ChessPiece.PieceType.ROOK,
-//                    ChessPiece.PieceType.BISHOP,
-//                    ChessPiece.PieceType.KNIGHT
-//            };
             //Loop to check if opponent pieces have the position of the king as possible move
             for(int i= 1; i< 9; i++){
                 for(int j = 1; j < 9; j++){
@@ -113,27 +143,16 @@ public class ChessGame {
                     ChessPiece piece = board.getPiece(new ChessPosition(i,j));
                     //Checking if it is an opponent
                     if(piece.getTeamColor() != teamColor){
-                        if(piece.getPieceType() == ChessPiece.PieceType.PAWN ){
-
-                        }
-                        if(piece.getPieceType() == ChessPiece.PieceType.KNIGHT ){
-
-                        }
-                        if(piece.getPieceType() == ChessPiece.PieceType.ROOK ){
-
-                        }
-                        if(piece.getPieceType() == ChessPiece.PieceType.BISHOP ){
-
-                        }
-                        if(piece.getPieceType() == ChessPiece.PieceType.KING ){
-
-                        }
-                        if(piece.getPieceType() == ChessPiece.PieceType.QUEEN ){
-
-                        }
+                        //I want to use the function pieceMoves from my ChessPiece Class
+                       Collection<ChessMove> possibleMove =  piece.pieceMoves(board,new ChessPosition(i,j));
+                        //I want to check if King's position is inside the opponent possible moves
+                            if(possibleMove.contains(kingPosition)){
+                                kingInCheck = true;
+                            }
                     }
                 }
             }
+        return kingInCheck;
     }
 
     /**
