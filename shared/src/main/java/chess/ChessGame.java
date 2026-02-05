@@ -22,9 +22,14 @@ public class ChessGame {
     }
 
     //DEEP COPY
-    ChessGame(ChessGame original){
-        this.board = original.board;
-        this.teamTurn = ChessGame.TeamColor.WHITE;
+    public ChessBoard boardCopy (){
+        ChessBoard boarCopy = new ChessBoard();
+        for(int i = 1; i < 9;i++){
+            for(int j = 1; j < 9;j++){
+                boarCopy.addPiece(new ChessPosition(i,j),board.getPiece(new ChessPosition(i,j)));
+            }
+        }
+        return boarCopy;
     }
 
     /**
@@ -82,7 +87,15 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+            ChessPosition kingPosition;
+            for(int i= 1; i< 9; i++){
+                for(int j = 1; j < 9; j++){
+                    ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                    if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor()== teamColor){
+                        kingPosition = new ChessPosition(i,j);
+                    }
+                }
+            }
     }
 
     /**
