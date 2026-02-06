@@ -11,7 +11,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private final ChessBoard board;
+    private ChessBoard board;
     private TeamColor teamTurn;
 
     public ChessGame() {
@@ -82,15 +82,14 @@ public class ChessGame {
         if(piece == null){
             return  null;
         }
-        //If there is get its list of possible moves
+        //If there is a piece get its list of possible moves
         Collection<ChessMove> moves = piece.pieceMoves(board,startPosition);
 
         for(ChessMove a: moves){
             //Making moves inside my copy of ChessGame
             ChessGame tempChessGameCopy = chessGameCopy();
             //Assuming my function works
-
-
+            tempChessGameCopy.justMakeMove(a);
             //Check if king is in Check
             boolean isKingGood = tempChessGameCopy.isInCheck(piece.getTeamColor());
 
@@ -103,7 +102,11 @@ public class ChessGame {
 
     //Helper Function
     public void justMakeMove(ChessMove a){
-
+        ChessPiece temPiece = board.getPiece(a.getStartPosition());
+        //Update the board
+        board.addPiece(a.getEndPosition(),temPiece);
+        //Make previous location to null
+        board.addPiece(a.getStartPosition(),null);
     }
 
     /**
@@ -123,7 +126,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-            //Loop to get King's position
+            //Initializing kings position
             ChessPosition kingPosition = null;
             boolean kingInCheck = false;
 
@@ -148,6 +151,8 @@ public class ChessGame {
                         //I want to check if King's position is inside the opponent possible moves
                             if(possibleMove.contains(kingPosition)){
                                 kingInCheck = true;
+                            }else{
+                                kingInCheck = false;
                             }
                     }
                 }
@@ -191,7 +196,8 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
+        //throw new RuntimeException("Not implemented");
     }
 
     @Override
