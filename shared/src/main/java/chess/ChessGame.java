@@ -78,7 +78,7 @@ public class ChessGame {
 
         //Piece
         ChessPiece piece  = board.getPiece(startPosition);
-        //Checking if there is a piece
+        //Checking if there is no piece
         if(piece == null){
             return  null;
         }
@@ -86,21 +86,22 @@ public class ChessGame {
         Collection<ChessMove> moves = piece.pieceMoves(board,startPosition);
 
         for(ChessMove a: moves){
-            //Making moves inside my copy of ChessGame
+            //Making a copy of ChessGame to make moves inside
             ChessGame tempChessGameCopy = chessGameCopy();
-            //Assuming my function works
+            //Making the move inside my copy
             tempChessGameCopy.justMakeMove(a);
             //Check if king is in Check
             boolean isKingGood = tempChessGameCopy.isInCheck(piece.getTeamColor());
-
+            //If king is safe add to my finalList
             if(!isKingGood){
                 finalList.add(a);
             }
         }
+        //Returning my final List of Valid moves
         return finalList;
     }
 
-    //Helper Function
+    //Helper Function - This function makes the move without checking
     public void justMakeMove(ChessMove a){
         ChessPiece temPiece = board.getPiece(a.getStartPosition());
         //Update the board
@@ -116,7 +117,35 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition startingPosition = move.getStartPosition();
+        ChessPiece piece = board.getPiece(startingPosition);
+
+        //Making sure that there is a piece there
+        if(piece == null){
+            throw new InvalidMoveException("No piece to move");
+        }
+
+        //If there is a piece then do the following
+        Collection<ChessMove> moves = validMoves(startingPosition);
+        if(moves.contains(move)){
+            for(ChessMove a: moves){
+                ChessPiece temPiece = board.getPiece(a.getStartPosition());
+                //Update the board
+                board.addPiece(a.getEndPosition(),temPiece);
+                //Make previous location to null
+                board.addPiece(a.getStartPosition(),null);
+
+                //Updating the team turn
+                if(teamTurn == TeamColor.WHITE){
+                    setTeamTurn(TeamColor.BLACK);
+                }else{
+                    setTeamTurn(TeamColor.WHITE);
+                }
+            }
+        }else{
+            throw  new InvalidMoveException("Invalid Move");
+        }
+
     }
 
     /**
@@ -134,6 +163,7 @@ public class ChessGame {
             for(int i= 1; i< 9; i++){
                 for(int j = 1; j < 9; j++){
                     ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                    if(piece == null){continue;}
                     if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor){
                         kingPosition = new ChessPosition(i,j);
                     }
@@ -144,15 +174,20 @@ public class ChessGame {
                 for(int j = 1; j < 9; j++){
                     //Getting each piece
                     ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                    if(piece == null){continue;}
                     //Checking if it is an opponent
                     if(piece.getTeamColor() != teamColor){
                         //I want to use the function pieceMoves from my ChessPiece Class
                        Collection<ChessMove> possibleMove =  piece.pieceMoves(board,new ChessPosition(i,j));
+
+                       Collection<ChessPosition> endPositions = new ArrayList<>();
+                       for(ChessMove move : possibleMove){
+                           endPositions.add(move.getEndPosition());
+                       }
+
                         //I want to check if King's position is inside the opponent possible moves
-                            if(possibleMove.contains(kingPosition)){
+                            if(endPositions.contains(kingPosition)){
                                 kingInCheck = true;
-                            }else{
-                                kingInCheck = false;
                             }
                     }
                 }
@@ -187,7 +222,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -197,7 +232,6 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
-        //throw new RuntimeException("Not implemented");
     }
 
     @Override
