@@ -6,13 +6,14 @@ import server.dataaccess.DataAccessUsers;
 import java.util.Collection;
 
 public class Service {
+    DataAccessGames dataGames = new DataAccessGames();
+    DataAccessUsers dataUsers = new DataAccessUsers();
+
     public  void clearAll(){
-        DataAccessGames data = new DataAccessGames();
-        data.clearGames();
+        dataGames.clearGames();
     }
 
     public void register(){
-        DataAccessUsers data = new DataAccessUsers();
-        data.registerUser();
+        dataUsers.registerUser();
     }
 }

@@ -12,6 +12,6 @@ public class Handler {
 
     public String handlerRegister(){
         service.register();
-        return  "{username : password:, email: }";
+        return  "{username :, password :, email : }";
     }
 }
