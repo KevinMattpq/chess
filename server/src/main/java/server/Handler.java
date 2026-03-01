@@ -3,10 +3,15 @@ package server;
 import server.service.Service;
 
 public class Handler {
+    Service service = new Service();
 
     public String handlerClear(){
-        Service service = new Service();
         service.clearAll();
-        return "{}" ;
+        return "[200]{}" ;
+    }
+
+    public String handlerRegister(){
+        service.register();
+        return  "{username : password:, email: }";
     }
 }

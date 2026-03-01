@@ -12,6 +12,7 @@ public class Server {
 
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", this::clear);
+        javalin.post("/user",this::register);
 
     }
 
@@ -26,6 +27,11 @@ public class Server {
         handler.handlerClear();
     }
 
+    private  void register(Context ctx){
+        System.out.print("Test Register");
+        Handler handler = new Handler();
+        handler.handlerRegister();
+    }
     public void stop() {
         javalin.stop();
     }
