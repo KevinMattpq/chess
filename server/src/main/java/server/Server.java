@@ -36,6 +36,12 @@ public class Server {
         Handler handler = new Handler();
         handler.handlerRegister();
     }
+
+//    public void login(Context ctx){
+//        System.out.print("Testing Login");
+//        Handler handler = new Handler();
+//        handler.handlerLogin();
+//    }
     public void stop() {
         javalin.stop();
     }

@@ -14,4 +14,8 @@ public class Handler {
         service.register();
         return  "{username :, password :, email : }";
     }
+
+    public String handleLogin(){
+        //
+    }
 }
