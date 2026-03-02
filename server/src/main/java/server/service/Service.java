@@ -1,5 +1,7 @@
 package server.service;
 
+import model.AuthData;
+import model.UserData;
 import server.dataaccess.DataAccessGames;
 import server.dataaccess.DataAccessUsers;
 
@@ -13,7 +15,12 @@ public class Service {
         dataGames.clearGames();
     }
 
-    public void register(){
-        dataUsers.registerUser();
+    //
+    public AuthData register(UserData userData) throws ResponseException{
+        if(dataUsers.readUser(userData.username()) != null){
+            throw new ResponseException("Username already exist");
+        }
+        dataUsers.createUser(userData);
+        return null;
     }
 }

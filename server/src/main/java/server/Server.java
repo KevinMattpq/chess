@@ -1,11 +1,16 @@
 package server;
 
+import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
+import model.AuthData;
+import model.UserData;
+import server.service.Service;
 
 public class Server {
 
     private final Javalin javalin;
+    private final Service service = new Service();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -26,15 +31,16 @@ public class Server {
     }
 
     private void clear(Context ctx){
+        service.clearAll();
         System.out.print("Test");
-        Handler handler = new Handler();
-        handler.handlerClear();
     }
 
     private  void register(Context ctx){
+        UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
+        AuthData auth = service.register(userData);
+        ctx.result(new Gson().toJson(auth));
+        ctx.status(200);
         System.out.print("Test Register");
-        Handler handler = new Handler();
-        handler.handlerRegister();
     }
 
 //    public void login(Context ctx){

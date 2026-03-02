@@ -12,17 +12,22 @@ public class DataAccessUsers implements DAOUsersInterface {
     public void createUser(UserData userData){
         String username = userData.username();
         users.put(username,userData);
-        System.out.print("Working");
+        System.out.print("Working Create User");
     }
 
-    @Override
-    public void readUser() {
 
+
+    @Override
+    public UserData readUser(String userName) {
+        if(users.containsKey(userName)){
+            return users.get(userName);
+        }
+        return null;
     }
 
-    @Override
-    public void deleteUser() {
 
+    @Override
+    public void deleteUser(String userName) {
     }
 
 }
