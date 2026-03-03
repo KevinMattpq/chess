@@ -19,7 +19,7 @@ public class Server {
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", this::clear);
         javalin.post("/user",this::register);
-//        javalin.post("/session", this::login);
+        javalin.post("/session", this::login);
 //        javalin.delete("/session",this::logout);
 //        javalin.get("/game", this::listOfGames);
 //        javalin.post("/game",this::createGame);
@@ -42,7 +42,6 @@ public class Server {
             AuthData auth = service.register(userData);
             ctx.result(new Gson().toJson(auth));
             ctx.status(200);
-            //System.out.print("Test Register");
         }catch (ResponseException errorResponse){
             if(errorResponse.getMessage() == "Error: Bad Request"){
                 ctx.status(400);
@@ -57,15 +56,18 @@ public class Server {
 
     public void login(Context ctx) throws ResponseException{
         UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
-
         try{
             AuthData auth = service.login(userData);
-            ctx.result(new Gson.toJson(auth));
+            ctx.result(new Gson().toJson(auth));
             ctx.status(200);
-        }catch (ResponseException errorResponse){
-            if(errorResponse.getMessage() == "Bad Request"){
+        }catch (ResponseException loginError){
+            if(loginError.getMessage() == "Bad Request"){
                 ctx.status(400);
-                ctx.result(errorResponse.toJson());
+                ctx.result(loginError.toJson());
+            }
+            if (loginError.getMessage() == "unauthorized") {
+                ctx.status(401);
+                ctx.result(loginError.toJson());
             }
         }
     }

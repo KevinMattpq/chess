@@ -7,6 +7,7 @@ import server.dataaccess.DataAccessUsers;
 import server.dataaccess.DataAccessAuthData;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class Service {
     DataAccessGames dataGames = new DataAccessGames();
@@ -29,7 +30,20 @@ public class Service {
         }
 
         dataUsers.createUser(userData);
-        AuthData registerResult = dataAuth.createAuthToken(userData.username());
-        return registerResult;
+        return dataAuth.createAuthToken(userData.username());
+    }
+
+    public AuthData login(UserData userData) throws  ResponseException{
+        //Bad Request
+        if(userData.username() == null || userData.password() == null){
+            throw new ResponseException("Error: Bad Request");
+        }
+        //Password Check
+        if(!Objects.equals(dataUsers.readUser(userData.username()).password(), userData.password())){
+            throw new ResponseException("Error: unauthorized");
+        }
+
+        dataUsers.readUser(userData.username());
+        return dataAuth.createAuthToken(userData.username());
     }
 }
