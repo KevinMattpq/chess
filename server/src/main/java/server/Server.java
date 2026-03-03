@@ -33,7 +33,7 @@ public class Server {
 
     private void clear(Context ctx){
         service.clearAll();
-        System.out.print("Test");
+        //System.out.print("Test");
     }
 
     private  void register(Context ctx) throws ResponseException {
@@ -61,16 +61,28 @@ public class Server {
             ctx.result(new Gson().toJson(auth));
             ctx.status(200);
         }catch (ResponseException loginError){
-            if(loginError.getMessage() == "Bad Request"){
+            if(loginError.getMessage() == "Error: Bad Request"){
                 ctx.status(400);
                 ctx.result(loginError.toJson());
             }
-            if (loginError.getMessage() == "unauthorized") {
+            if (loginError.getMessage() == "Error: unauthorized") {
                 ctx.status(401);
                 ctx.result(loginError.toJson());
             }
         }
     }
+
+
+//    public void  logout(Context ctx) throws ResponseException{
+//        try{
+//            service.logout();
+//        }catch(ResponseException logoutError){
+//            if(logoutError.getMessage() == "Error: unauthorized")
+//            ctx.status(401);
+//            ctx.result(logoutError.toJson());
+//        }
+//    }
+
     public void stop() {
         javalin.stop();
     }

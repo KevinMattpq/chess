@@ -18,7 +18,9 @@ public class Service {
         dataGames.clearGames();
     }
 
-    //
+    public void logout(){
+
+    }
     public AuthData register(UserData userData) throws ResponseException{
         //Bad Request
         if(userData.username() == null || userData.password() == null || userData.email() == null){
@@ -38,8 +40,8 @@ public class Service {
         if(userData.username() == null || userData.password() == null){
             throw new ResponseException("Error: Bad Request");
         }
-        //Password Check
-        if(!Objects.equals(dataUsers.readUser(userData.username()).password(), userData.password())){
+        //Username Check and Password Check
+        if(!Objects.equals(dataUsers.readUser(userData.username()), userData.username()) || !Objects.equals(dataUsers.readUser(userData.username()).password(), userData.password())){
             throw new ResponseException("Error: unauthorized");
         }
 

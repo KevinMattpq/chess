@@ -14,7 +14,8 @@ public class DataAccessAuthData implements DAOAuthDataInterface{
 
 
     @Override
-    public void deleteAuthToken() {
-
+    public void deleteAuthToken(String username) {
+        //I want to delete the AuthToken
+        //authToken.authToken().
     }
 }

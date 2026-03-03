@@ -12,7 +12,6 @@ public class DataAccessUsers implements DAOUsersInterface {
     public void createUser(UserData userData){
         String username = userData.username();
         users.put(username,userData);
-        System.out.print("Working Create User");
     }
 
 
