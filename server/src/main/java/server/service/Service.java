@@ -2,9 +2,9 @@ package server.service;
 
 import model.AuthData;
 import model.UserData;
-import server.dataaccess.DataAccessGames;
-import server.dataaccess.DataAccessUsers;
-import server.dataaccess.DataAccessAuthData;
+import dataaccess.DataAccessGames;
+import dataaccess.DataAccessUsers;
+import dataaccess.DataAccessAuthData;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -18,9 +18,9 @@ public class Service {
         dataGames.clearGames();
     }
 
-    public void logout(){
-
-    }
+//    public void logout(){
+//        if
+//    }
     public AuthData register(UserData userData) throws ResponseException{
         //Bad Request
         if(userData.username() == null || userData.password() == null || userData.email() == null){
@@ -40,9 +40,15 @@ public class Service {
         if(userData.username() == null || userData.password() == null){
             throw new ResponseException("Error: Bad Request");
         }
-        //Username Check and Password Check
-        if(!Objects.equals(dataUsers.readUser(userData.username()), userData.username()) || !Objects.equals(dataUsers.readUser(userData.username()).password(), userData.password())){
+        //Checking if user exits
+        if(dataUsers.readUser(userData.username()) == null){
             throw new ResponseException("Error: unauthorized");
+        }
+        //Getting the information of the User witht that username
+        UserData user = dataUsers.readUser(userData.username());
+        //Password Check
+        if(!user.password().equals(userData.password())){
+            throw  new ResponseException("Error: unauthorized");
         }
 
         dataUsers.readUser(userData.username());
