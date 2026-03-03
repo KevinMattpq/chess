@@ -5,6 +5,7 @@ import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
 import model.UserData;
+import server.service.ResponseException;
 import server.service.Service;
 
 public class Server {
@@ -35,19 +36,39 @@ public class Server {
         System.out.print("Test");
     }
 
-    private  void register(Context ctx){
+    private  void register(Context ctx) throws ResponseException {
         UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
-        AuthData auth = service.register(userData);
-        ctx.result(new Gson().toJson(auth));
-        ctx.status(200);
-        System.out.print("Test Register");
+        try{
+            AuthData auth = service.register(userData);
+            ctx.result(new Gson().toJson(auth));
+            ctx.status(200);
+            //System.out.print("Test Register");
+        }catch (ResponseException errorResponse){
+            if(errorResponse.getMessage() == "Error: Bad Request"){
+                ctx.status(400);
+                ctx.result(errorResponse.toJson());
+            }else {
+                ctx.status(403);
+                ctx.result(errorResponse.toJson());
+            }
+        }
+
     }
 
-//    public void login(Context ctx){
-//        System.out.print("Testing Login");
-//        Handler handler = new Handler();
-//        handler.handlerLogin();
-//    }
+    public void login(Context ctx) throws ResponseException{
+        UserData userData = new Gson().fromJson(ctx.body(), UserData.class);
+
+        try{
+            AuthData auth = service.login(userData);
+            ctx.result(new Gson.toJson(auth));
+            ctx.status(200);
+        }catch (ResponseException errorResponse){
+            if(errorResponse.getMessage() == "Bad Request"){
+                ctx.status(400);
+                ctx.result(errorResponse.toJson());
+            }
+        }
+    }
     public void stop() {
         javalin.stop();
     }
