@@ -3,10 +3,8 @@ package server;
 import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
-import model.AuthData;
-import model.CreateGameResult;
-import model.GameData;
-import model.UserData;
+import model.*;
+import org.eclipse.jetty.server.Response;
 import server.service.ResponseException;
 import server.service.Service;
 
@@ -23,9 +21,9 @@ public class Server {
         javalin.post("/user",this::register);
         javalin.post("/session", this::login);
         javalin.delete("/session",this::logout);
-//        javalin.get("/game", this::listOfGames);
+        javalin.get("/game", this::listOfGames);
         javalin.post("/game",this::createGame);
-//        javalin.put("/game",this::joinGame);
+        javalin.put("/game",this::joinGame);
     }
 
     public int run(int desiredPort) {
@@ -88,16 +86,58 @@ public class Server {
 
     public void createGame(Context ctx) throws ResponseException{
         GameData userData = new Gson().fromJson(ctx.body(),GameData.class);
-
+        String authToken = ctx.header("authorization");
         try {
+            service.isUserLogin(authToken);
             CreateGameResult newGame = service.createGame(userData);
             ctx.result(new Gson().toJson(newGame));
             ctx.status(200);
         }catch (ResponseException createError){
-            if(createError.getMessage() == "Error: Bad Request "){
+            if(createError.getMessage() == "Error: Bad Request"){
                 ctx.status(400);
                 ctx.result(createError.toJson());
             }
+            if(createError.getMessage() == "Error: Unauthorized"){
+                ctx.status(401);
+                ctx.result(createError.toJson());
+            }
+        }
+    }
+
+    public void listOfGames(Context ctx) throws ResponseException{
+        String authToken = ctx.header("authorization");
+        try{
+            service.isUserLogin(authToken);
+            service.listOfGames(authToken);
+            ctx.status(200);
+        }catch (ResponseException listOfGamesError){
+            if(listOfGamesError.getMessage() == "Error: Unauthorized"){
+                ctx.status(401);
+                ctx.result(listOfGamesError.toJson());
+            }
+        }
+    }
+
+    public void joinGame(Context ctx) throws ResponseException{
+        JoinGameRequest userData = new Gson().fromJson(ctx.body(),JoinGameRequest.class);
+        String authToken = ctx.header("authorization");
+        try{
+            service.isUserLogin(authToken);
+            service.joinGame(userData);
+        }catch (ResponseException joinGameError){
+            if(joinGameError.getMessage() == "Error: Bad Request"){
+                ctx.status(400);
+                ctx.result(joinGameError.toJson());
+            }
+            if(joinGameError.getMessage() == "Error: Unauthorized"){
+                ctx.status(401);
+                ctx.result(joinGameError.toJson());
+            }
+            if(joinGameError.getMessage() == "Error: AlreadyTaken"){
+                ctx.status(403);
+                ctx.result(joinGameError.toJson());
+            }
+
         }
     }
 

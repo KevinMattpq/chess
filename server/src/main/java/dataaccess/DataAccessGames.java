@@ -26,10 +26,13 @@ public class DataAccessGames implements DAOGamesInterface {
     }
 
 
-//    @Override
-//    public GameData readGame(String gameName) {
-//        return listOfGames.;
-//    }
+    @Override
+    public GameData readGame(int gameID) {
+        if(listOfGames.containsKey(gameID)){
+            return listOfGames.get(gameID);
+        }
+        return null;
+    }
 
 
 

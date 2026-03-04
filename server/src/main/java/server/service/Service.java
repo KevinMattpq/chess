@@ -1,12 +1,14 @@
 package server.service;
 
-import model.AuthData;
-import model.CreateGameResult;
-import model.GameData;
-import model.UserData;
+import model.*;
 import dataaccess.DataAccessGames;
 import dataaccess.DataAccessUsers;
 import dataaccess.DataAccessAuthData;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class Service {
     DataAccessGames dataGames = new DataAccessGames();
@@ -60,12 +62,37 @@ public class Service {
     }
 
     public CreateGameResult createGame(GameData userData) throws ResponseException{
-
+        //Checking if gameName was provided
         if(userData.gameName()  == null){
             throw new ResponseException("Error: Bad Request");
         }
-
         GameData newGame = dataGames.createGame(userData.gameName());
         return new CreateGameResult(newGame.id());
+    }
+
+    public ResponseException isUserLogin(String authToken)throws ResponseException{
+        if(dataAuth.readAuthToken(authToken) == null){
+            throw new ResponseException("Error: Unauthorized");
+        }
+        return null;
+    }
+
+
+    public JoinGameRequest joinGame(JoinGameRequest userData) throws  ResponseException{
+        List<String> colors = Arrays.asList("WHITE", "BLACK");
+
+        if(userData.playerColor() == null || colors.contains(userData.playerColor()) == false || userData.gameID() == 0 || dataGames.readGame(userData.gameID()) == null ){
+            throw new ResponseException("Error: Bad Request");
+        }
+
+        JoinGameRequest newJoinGame = new JoinGameRequest(userData.playerColor(), userData.gameID());
+        return newJoinGame;
+    }
+
+    public ListOfGamesResult listOfGames(String authToken) throws ResponseException{
+        if(dataAuth.readAuthToken(authToken) == null){
+            throw new ResponseException("Error: Unauthorized");
+        }
+        return null;
     }
 }
