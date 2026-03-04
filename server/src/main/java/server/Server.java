@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
+import model.CreateGameResult;
+import model.GameData;
 import model.UserData;
 import server.service.ResponseException;
 import server.service.Service;
@@ -20,9 +22,9 @@ public class Server {
         javalin.delete("/db", this::clear);
         javalin.post("/user",this::register);
         javalin.post("/session", this::login);
-//        javalin.delete("/session",this::logout);
+        javalin.delete("/session",this::logout);
 //        javalin.get("/game", this::listOfGames);
-//        javalin.post("/game",this::createGame);
+        javalin.post("/game",this::createGame);
 //        javalin.put("/game",this::joinGame);
     }
 
@@ -33,7 +35,6 @@ public class Server {
 
     private void clear(Context ctx){
         service.clearAll();
-        //System.out.print("Test");
     }
 
     private  void register(Context ctx) throws ResponseException {
@@ -73,15 +74,33 @@ public class Server {
     }
 
 
-//    public void  logout(Context ctx) throws ResponseException{
-//        try{
-//            service.logout();
-//        }catch(ResponseException logoutError){
-//            if(logoutError.getMessage() == "Error: unauthorized")
-//            ctx.status(401);
-//            ctx.result(logoutError.toJson());
-//        }
-//    }
+    public void  logout(Context ctx) throws ResponseException{
+        String authToken = ctx.header("authorization");
+        try{
+            service.logout(authToken);
+        }catch(ResponseException logoutError){
+            if(logoutError.getMessage() == "Error: unauthorized")
+            ctx.status(401);
+            ctx.result(logoutError.toJson());
+        }
+    }
+
+
+    public void createGame(Context ctx) throws ResponseException{
+        GameData userData = new Gson().fromJson(ctx.body(),GameData.class);
+
+        try {
+            CreateGameResult newGame = service.createGame(userData);
+            ctx.result(new Gson().toJson(newGame));
+            ctx.status(200);
+        }catch (ResponseException createError){
+            if(createError.getMessage() == "Error: Bad Request "){
+                ctx.status(400);
+                ctx.result(createError.toJson());
+            }
+        }
+    }
+
 
     public void stop() {
         javalin.stop();

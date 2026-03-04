@@ -13,8 +13,16 @@ public class DataAccessAuthData implements DAOAuthDataInterface {
         String authToken = UUID.randomUUID().toString();
         String username = userName;
         AuthData result = new AuthData(authToken,username);
-        listAuthTokens.put(userName,result);
+        listAuthTokens.put(result.authToken(),result);
         return result;
+    }
+
+    @Override
+    public AuthData readAuthToken(String authToken) {
+        if(listAuthTokens.containsKey(authToken)){
+            return listAuthTokens.get(authToken);
+        }
+        return null;
     }
 
 
@@ -22,5 +30,10 @@ public class DataAccessAuthData implements DAOAuthDataInterface {
     public void deleteAuthToken(String username) {
         //I want to delete the AuthToken
         listAuthTokens.remove(username);
+    }
+
+    @Override
+    public void deleteAllAuthTokens() {
+        listAuthTokens.clear();
     }
 }

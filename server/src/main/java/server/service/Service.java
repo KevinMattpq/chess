@@ -1,13 +1,12 @@
 package server.service;
 
 import model.AuthData;
+import model.CreateGameResult;
+import model.GameData;
 import model.UserData;
 import dataaccess.DataAccessGames;
 import dataaccess.DataAccessUsers;
 import dataaccess.DataAccessAuthData;
-
-import java.util.Collection;
-import java.util.Objects;
 
 public class Service {
     DataAccessGames dataGames = new DataAccessGames();
@@ -16,11 +15,16 @@ public class Service {
 
     public  void clearAll(){
         dataGames.clearGames();
+        dataUsers.deleteAllUsers();
+        dataAuth.deleteAllAuthTokens();
     }
 
-//    public void logout(){
-//        if
-//    }
+    public void logout(String authToken) throws  ResponseException{
+        if(dataAuth.readAuthToken(authToken) == null){
+            throw new ResponseException("Error: unauthorized");
+        }
+        dataAuth.deleteAuthToken(authToken);
+    }
     public AuthData register(UserData userData) throws ResponseException{
         //Bad Request
         if(userData.username() == null || userData.password() == null || userData.email() == null){
@@ -53,5 +57,15 @@ public class Service {
 
         dataUsers.readUser(userData.username());
         return dataAuth.createAuthToken(userData.username());
+    }
+
+    public CreateGameResult createGame(GameData userData) throws ResponseException{
+
+        if(userData.gameName()  == null){
+            throw new ResponseException("Error: Bad Request");
+        }
+
+        GameData newGame = dataGames.createGame(userData.gameName());
+        return new CreateGameResult(newGame.id());
     }
 }
