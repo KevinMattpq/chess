@@ -108,7 +108,8 @@ public class Server {
         String authToken = ctx.header("authorization");
         try{
             service.isUserLogin(authToken);
-            service.listOfGames(authToken);
+            ListOfGamesResult result = service.listOfGames(authToken);
+            ctx.result(new Gson().toJson(result));
             ctx.status(200);
         }catch (ResponseException listOfGamesError){
             if(listOfGamesError.getMessage() == "Error: Unauthorized"){
@@ -122,8 +123,8 @@ public class Server {
         JoinGameRequest userData = new Gson().fromJson(ctx.body(),JoinGameRequest.class);
         String authToken = ctx.header("authorization");
         try{
-            service.isUserLogin(authToken);
-            service.joinGame(userData);
+            AuthData authData = service.isUserLogin(authToken);
+            service.joinGame(userData,authData.username());
         }catch (ResponseException joinGameError){
             if(joinGameError.getMessage() == "Error: Bad Request"){
                 ctx.status(400);

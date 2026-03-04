@@ -61,30 +61,37 @@ public class Service {
         return dataAuth.createAuthToken(userData.username());
     }
 
-    public CreateGameResult createGame(GameData userData) throws ResponseException{
+    public CreateGameResult createGame(GameData gameData) throws ResponseException{
         //Checking if gameName was provided
-        if(userData.gameName()  == null){
+        if(gameData.gameName()  == null){
             throw new ResponseException("Error: Bad Request");
         }
-        GameData newGame = dataGames.createGame(userData.gameName());
-        return new CreateGameResult(newGame.id());
+        GameData newGame = dataGames.createGame(gameData.gameName());
+        return new CreateGameResult(newGame.gameID());
     }
 
-    public ResponseException isUserLogin(String authToken)throws ResponseException{
+    public AuthData isUserLogin(String authToken)throws ResponseException{
         if(dataAuth.readAuthToken(authToken) == null){
             throw new ResponseException("Error: Unauthorized");
         }
-        return null;
+        return dataAuth.readAuthToken(authToken);
     }
 
 
-    public JoinGameRequest joinGame(JoinGameRequest userData) throws  ResponseException{
+    public JoinGameRequest joinGame(JoinGameRequest userData, String username) throws  ResponseException{
         List<String> colors = Arrays.asList("WHITE", "BLACK");
 
-        if(userData.playerColor() == null || colors.contains(userData.playerColor()) == false || userData.gameID() == 0 || dataGames.readGame(userData.gameID()) == null ){
+        if(userData.playerColor() == null || !colors.contains(userData.playerColor())|| userData.gameID() == 0 || dataGames.readGame(userData.gameID()) == null ){
             throw new ResponseException("Error: Bad Request");
         }
+        GameData game = dataGames.readGame(userData.gameID());
 
+        if(userData.playerColor().equals("WHITE")){
+            dataGames.updateGame(new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
+        }else{
+            dataGames.updateGame(new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
+
+        }
         JoinGameRequest newJoinGame = new JoinGameRequest(userData.playerColor(), userData.gameID());
         return newJoinGame;
     }
@@ -93,6 +100,6 @@ public class Service {
         if(dataAuth.readAuthToken(authToken) == null){
             throw new ResponseException("Error: Unauthorized");
         }
-        return null;
+        return new ListOfGamesResult(dataGames.readAllGames());
     }
 }
