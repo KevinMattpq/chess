@@ -22,6 +22,7 @@ public class Service {
     }
 
     public void logout(String authToken) throws  ResponseException{
+        //Checking if there is an authToken - "Login"
         if(dataAuth.readAuthToken(authToken) == null){
             throw new ResponseException("Error: unauthorized");
         }
@@ -71,6 +72,7 @@ public class Service {
     }
 
     public AuthData isUserLogin(String authToken)throws ResponseException{
+        //Checking if the authToken has a value
         if(dataAuth.readAuthToken(authToken) == null){
             throw new ResponseException("Error: Unauthorized");
         }
@@ -78,19 +80,25 @@ public class Service {
     }
 
 
-    public JoinGameRequest joinGame(JoinGameRequest userData, String username) throws  ResponseException{
+    public JoinGameRequest joinGame(JoinGameRequest userData, String username) throws  ResponseException {
         List<String> colors = Arrays.asList("WHITE", "BLACK");
 
-        if(userData.playerColor() == null || !colors.contains(userData.playerColor())|| userData.gameID() == 0 || dataGames.readGame(userData.gameID()) == null ){
+        if (userData.playerColor() == null || !colors.contains(userData.playerColor()) || userData.gameID() == 0 ) {
             throw new ResponseException("Error: Bad Request");
         }
+
+        if(dataGames.readGame(userData.gameID()).whiteUsername() != null && userData.playerColor().equals("WHITE")|| dataGames.readGame(userData.gameID()).blackUsername() != null && userData.playerColor().equals("BLACK")){
+            throw new ResponseException("Error: AlreadyTaken");
+        }
+
+        //Old game (before update)
         GameData game = dataGames.readGame(userData.gameID());
 
-        if(userData.playerColor().equals("WHITE")){
+        //Updating username based on color
+        if (userData.playerColor().equals("WHITE")) {
             dataGames.updateGame(new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
-        }else{
+        } else {
             dataGames.updateGame(new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
-
         }
         JoinGameRequest newJoinGame = new JoinGameRequest(userData.playerColor(), userData.gameID());
         return newJoinGame;
