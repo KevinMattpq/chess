@@ -23,10 +23,6 @@ public class DataAccessUsers implements DAOUsersInterface {
         return null;
     }
 
-
-    @Override
-    public void deleteUser(String userName) {}
-
     @Override
     public void deleteAllUsers() {
         users.clear();

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CalcPawn extends PieceMovesCalculator {
-    private static final ChessPiece.PieceType[] promotionTypes = {
+    private static final ChessPiece.PieceType[] PROMOTION_TYPES = {
             ChessPiece.PieceType.QUEEN,
             ChessPiece.PieceType.ROOK,
             ChessPiece.PieceType.BISHOP,
@@ -38,7 +38,7 @@ public class CalcPawn extends PieceMovesCalculator {
         }
         int opponentIrow = pawnColor == ChessGame.TeamColor.BLACK ? 2 : 7;
         if(currentPosition.getRow() == opponentIrow){
-            for (ChessPiece.PieceType pType : promotionTypes ){
+            for (ChessPiece.PieceType pType : PROMOTION_TYPES ){
                 ChessMove pmoveX = new ChessMove(currentPosition, positionX, pType);
                 listOfMoves.add(pmoveX);
             }
