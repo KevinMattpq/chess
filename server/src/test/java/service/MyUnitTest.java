@@ -26,7 +26,6 @@ public class MyUnitTest {
     public static void initTest() {
         serverTest = new Server();
         var port = serverTest.run(0);
-        System.out.println("Started test HTTP server on " + port);
         serverFacadeTest = new TestServerFacade("localhost", Integer.toString(port));
         existingUserTest = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
         newUserTest = new TestUser("NewUser", "newUserPassword", "nu@mail.com");
