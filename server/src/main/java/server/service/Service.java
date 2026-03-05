@@ -87,7 +87,10 @@ public class Service {
             throw new ResponseException("Error: Bad Request");
         }
 
-        if(dataGames.readGame(userData.gameID()).whiteUsername() != null && userData.playerColor().equals("WHITE")|| dataGames.readGame(userData.gameID()).blackUsername() != null && userData.playerColor().equals("BLACK")){
+        if(dataGames.readGame(userData.gameID()).whiteUsername() != null &&
+                userData.playerColor().equals("WHITE")||
+                dataGames.readGame(userData.gameID()).blackUsername() != null &&
+                userData.playerColor().equals("BLACK")){
             throw new ResponseException("Error: AlreadyTaken");
         }
 

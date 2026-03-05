@@ -72,14 +72,15 @@ public class Server {
     }
 
 
-    public void  logout(Context ctx) throws ResponseException{
+    public void  logout(Context ctx) throws ResponseException {
         String authToken = ctx.header("authorization");
-        try{
+        try {
             service.logout(authToken);
-        }catch(ResponseException logoutError){
-            if(logoutError.getMessage() == "Error: unauthorized")
-            ctx.status(401);
-            ctx.result(logoutError.toJson());
+        } catch (ResponseException logoutError) {
+            if (logoutError.getMessage() == "Error: unauthorized") {
+                ctx.status(401);
+                ctx.result(logoutError.toJson());
+            }
         }
     }
 
