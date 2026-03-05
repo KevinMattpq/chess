@@ -70,22 +70,22 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.BISHOP) {
-            return new calcBishop().calculateMoves(board,myPosition);
+            return new CalcBishop().calculateMoves(board,myPosition);
         }
         if(piece.getPieceType() == PieceType.ROOK){
-            return new calcRook().calculateMoves(board,myPosition);
+            return new CalcRook().calculateMoves(board,myPosition);
         }
         if(piece.getPieceType() == PieceType.KING){
-            return new calcKing().calculateMoves(board,myPosition);
+            return new CalcKing().calculateMoves(board,myPosition);
         }
         if(piece.getPieceType() == PieceType.QUEEN){
-            return new calcQueen().calculateMoves(board,myPosition);
+            return new CalcQueen().calculateMoves(board,myPosition);
         }
         if(piece.getPieceType() == PieceType.KNIGHT){
-            return new calcKnight().calculateMoves(board,myPosition);
+            return new CalcKnight().calculateMoves(board,myPosition);
         }
         if(piece.getPieceType() == PieceType.PAWN){
-            return new calcPawn().calculateMoves(board,myPosition);
+            return new CalcPawn().calculateMoves(board,myPosition);
         }
 
 

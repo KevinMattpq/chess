@@ -3,12 +3,13 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class calcQueen extends pieceMovesCalculator {
+public class CalcBishop extends PieceMovesCalculator {
 
-    //moveChecker FUNCTION - I used this one for all of the possible moves (top,topRight,topLeft,bottom,bottomRight,bottomLeft,right, left)
+    //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
     public void moveChecker (Collection listOfMoves,ChessBoard board,ChessPosition currentPosition, ChessPosition positionX, int row, int col){
         //Possible New Position
         ChessPiece availableSpotX = board.getPiece(positionX);
+
 
         while(availableSpotX == null) {
             //Possible Move
@@ -17,16 +18,6 @@ public class calcQueen extends pieceMovesCalculator {
             listOfMoves.add(pmoveX);
 
             //Update Section
-            //TOP
-            if (row == 1 && col == 0) {
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 0);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                } else {
-                    break;
-                }
-            }
-
             //TOP RIGHT
             if (row == 1 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 1);
@@ -36,7 +27,6 @@ public class calcQueen extends pieceMovesCalculator {
                     break;
                 }
             }
-
             //TOP LEFT
             if(row == 1 && col == -1){
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() - 1);
@@ -46,17 +36,6 @@ public class calcQueen extends pieceMovesCalculator {
                     break;
                 }
             }
-
-            //BOTTOM
-            if(row == -1 && col == 0){
-                positionX = new ChessPosition(positionX.getRow() -1, positionX.getColumn() + 0);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                } else {
-                    break;
-                }
-            }
-
             //BOTTOM RIGHT
             if(row == -1 && col == 1){
                 positionX = new ChessPosition(positionX.getRow()-1,positionX.getColumn()+1);
@@ -66,7 +45,6 @@ public class calcQueen extends pieceMovesCalculator {
                     break;
                 }
             }
-
             //BOTTOM LEFT
             if(row == -1 && col == -1){
                 positionX = new ChessPosition(positionX.getRow()-1,positionX.getColumn()-1);
@@ -77,31 +55,12 @@ public class calcQueen extends pieceMovesCalculator {
                 }
             }
 
-            //RIGHT
-            if(row == 0 && col == 1){
-                positionX = new ChessPosition(positionX.getRow()+0,positionX.getColumn()+1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                } else {
-                    break;
-                }
-            }
-            //LEFT
-            if(row == 0 && col == -1){
-                positionX = new ChessPosition(positionX.getRow()+0,positionX.getColumn()-1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                } else {
-                    break;
-                }
-            }
-
         }
-        //IN CASE A PIECE IS BLOCKING
-        if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
-            ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
-            listOfMoves.add(pmoveX);
-        }
+            //IN CASE A PIECE IS BLOCKING
+            if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
+                ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
+                listOfMoves.add(pmoveX);
+            }
     }
 
     //Checking that position is inside board
@@ -126,21 +85,6 @@ public class calcQueen extends pieceMovesCalculator {
         ChessPosition bottomRight = new ChessPosition(position.getRow()-1, position.getColumn()+1);
         //Variable that has the position BOTTOM LEFT from bishop
         ChessPosition bottomLeft = new ChessPosition(position.getRow()-1, position.getColumn()-1);
-        //Variable that has the position TOP
-        ChessPosition top = new ChessPosition(position.getRow()+1, position.getColumn()+0);
-        //Variable that has the position BOTTOM
-        ChessPosition  bottom = new ChessPosition(position.getRow()-1, position.getColumn()+0);
-        //Variable that has the position  RIGHT
-        ChessPosition right = new ChessPosition(position.getRow()+0, position.getColumn()+1);
-        //Variable that has the position  LEFT
-        ChessPosition left = new ChessPosition(position.getRow()+0, position.getColumn()-1);
-
-
-        //TOP
-        //Checkins is inside board
-        if (isInside(top)){
-            moveChecker(finalList,board,position,top,1,0);
-        }
 
         //TOP RIGHT
         //Checkins is inside board
@@ -153,11 +97,6 @@ public class calcQueen extends pieceMovesCalculator {
             moveChecker(finalList,board,position,topLeft,1,-1);
         }
 
-        //BOTTOM
-        if(isInside(bottom)){
-            moveChecker(finalList,board,position,bottom,-1,0);
-        }
-
         //BOTTOM RIGHT
         if(isInside(bottomRight)){
             moveChecker(finalList,board,position,bottomRight,-1,1);
@@ -167,17 +106,6 @@ public class calcQueen extends pieceMovesCalculator {
         if (isInside(bottomLeft)){
             moveChecker(finalList,board,position,bottomLeft,-1,-1);
         }
-
-        //RIGHT
-        if(isInside(right)){
-            moveChecker(finalList,board,position,right,0,1);
-        }
-
-        //LEFT
-        if (isInside(left)){
-            moveChecker(finalList,board,position,left,0,-1);
-        }
-
         return finalList;
     }
 }

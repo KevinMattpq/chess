@@ -3,7 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class calcPawn extends pieceMovesCalculator{
+public class CalcPawn extends PieceMovesCalculator {
     private static final ChessPiece.PieceType[] promotionTypes = {
             ChessPiece.PieceType.QUEEN,
             ChessPiece.PieceType.ROOK,
