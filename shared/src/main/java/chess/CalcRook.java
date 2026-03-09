@@ -56,9 +56,9 @@ public class CalcRook extends PieceMovesCalculator {
 
         }
         //IN CASE A PIECE IS BLOCKING
-        if (HelperFunctions.blockingPieceCheck(availableSpotX,currentPosition,board)){
-            ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
-            listOfMoves.add(pmoveX);
+        if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
+            ChessMove pmoveXR = new ChessMove(currentPosition,positionX,null);
+            listOfMoves.add(pmoveXR);
         }
     }
 

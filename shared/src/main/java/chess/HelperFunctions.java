@@ -3,10 +3,10 @@ package chess;
 import java.util.Collection;
 
 public class HelperFunctions {
-    public static boolean blockingPieceCheck(ChessPiece availableSpotX, ChessPosition currentPosition, ChessBoard board){
+    public void blockingPieceCheck(ChessPiece availableSpotX, ChessPosition positionX, ChessPosition currentPosition, ChessBoard board, Collection listOfMoves){
         if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
-            return true;
+            ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
+            listOfMoves.add(pmoveX);
         }
-        return false;
     }
 }

@@ -51,7 +51,7 @@ public class CalcKing extends PieceMovesCalculator {
         }
 
         //IN CASE A PIECE IS BLOCKING
-        if (HelperFunctions.blockingPieceCheck(availableSpotX,currentPosition,board)){
+        if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
             ChessMove pmoveXK = new ChessMove(currentPosition,positionX,null);
             listOfMoves.add(pmoveXK);
         }
