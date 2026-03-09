@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import chess.HelperFunctions;
 public class CalcKing extends PieceMovesCalculator {
     //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
     public void moveChecker (Collection listOfMoves, ChessBoard board, ChessPosition currentPosition, ChessPosition positionX, int row, int col){
