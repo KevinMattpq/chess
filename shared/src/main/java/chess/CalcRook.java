@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import chess.HelperFunctions;
 
 public class CalcRook extends PieceMovesCalculator {
     //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
@@ -55,7 +56,7 @@ public class CalcRook extends PieceMovesCalculator {
 
         }
         //IN CASE A PIECE IS BLOCKING
-        if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
+        if (HelperFunctions.blockingPieceCheck(availableSpotX,currentPosition,board)){
             ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
             listOfMoves.add(pmoveX);
         }
