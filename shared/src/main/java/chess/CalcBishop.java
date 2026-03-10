@@ -4,22 +4,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CalcBishop extends PieceMovesCalculator {
+
+    public boolean isInside(ChessPosition position){
+        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position){
         //Final List
         Collection finalList = new ArrayList();
 
-        //Variable that has the position TOP RIGHT from bishop
+        //Position TOP RIGHT
         ChessPosition topRight = new ChessPosition(position.getRow()+1, position.getColumn()+1);
-        //Variable that has the position TOP LEFT from bishop
+        //Position TOP LEFT
         ChessPosition topLeft = new ChessPosition(position.getRow()+1, position.getColumn()-1);
-        //Variable that has the position BOTTOM RIGHT from bishop
+        //Position BOTTOM RIGHT
         ChessPosition bottomRight = new ChessPosition(position.getRow()-1, position.getColumn()+1);
-        //Variable that has the position BOTTOM LEFT from bishop
+        //Position BOTTOM LEFT
         ChessPosition bottomLeft = new ChessPosition(position.getRow()-1, position.getColumn()-1);
 
         //TOP RIGHT
-        //Checkins is inside board
         if (isInside(topRight)){
             moveChecker(finalList,board,position,topRight,1,1);
         }
@@ -42,17 +50,15 @@ public class CalcBishop extends PieceMovesCalculator {
     }
     //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
     public void moveChecker (Collection listOfMoves,ChessBoard board,ChessPosition currentPosition, ChessPosition positionX, int row, int col){
-        //Possible New Position
+        //Possible Position
         ChessPiece availableSpotX = board.getPiece(positionX);
 
-
         while(availableSpotX == null) {
-            //Possible Move
+            //Creating Move
             ChessMove pmoveX = new ChessMove(currentPosition, positionX, null);
-            //Adding it to the final list
+            //Adding move to the final list
             listOfMoves.add(pmoveX);
 
-            //Update Section
             //TOP RIGHT
             if (row == 1 && col == 1) {
                 positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 1);
@@ -91,19 +97,10 @@ public class CalcBishop extends PieceMovesCalculator {
             }
 
         }
-            //IN CASE A PIECE IS BLOCKING
+            //PIECE IS BLOCKING
             if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
                 ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
                 listOfMoves.add(pmoveX);
             }
-    }
-
-    //Checking that position is inside board
-    public boolean isInside(ChessPosition position){
-        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
-            return true;
-        }else{
-            return false;
-        }
     }
 }
