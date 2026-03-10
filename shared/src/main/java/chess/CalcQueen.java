@@ -153,16 +153,6 @@ public class CalcQueen extends PieceMovesCalculator {
                     break;
                 }
             }
-
-            //RIGHT
-            if(row == 0 && col == 1){
-                positionX = new ChessPosition(positionX.getRow()+0,positionX.getColumn()+1);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                } else {
-                    break;
-                }
-            }
             //LEFT
             if(row == 0 && col == -1){
                 positionX = new ChessPosition(positionX.getRow()+0,positionX.getColumn()-1);
@@ -172,7 +162,15 @@ public class CalcQueen extends PieceMovesCalculator {
                     break;
                 }
             }
-
+            //RIGHT
+            if(row == 0 && col == 1){
+                positionX = new ChessPosition(positionX.getRow()+0,positionX.getColumn()+1);
+                if (isInside(positionX)) {
+                    availableSpotX = board.getPiece(positionX);
+                } else {
+                    break;
+                }
+            }
         }
         //IN CASE A PIECE IS BLOCKING
         if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
