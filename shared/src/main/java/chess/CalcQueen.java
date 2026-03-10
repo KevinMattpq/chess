@@ -5,6 +5,15 @@ import java.util.Collection;
 
 public class CalcQueen extends PieceMovesCalculator {
 
+    //Checking that position is inside board
+    public boolean isInside(ChessPosition position){
+        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     //moveChecker FUNCTION - I used this one for all of the possible moves (top,topRight,topLeft,bottom,bottomRight,bottomLeft,right, left)
     public void moveChecker (Collection listOfMoves,ChessBoard board,ChessPosition currentPosition, ChessPosition positionX, int row, int col){
         //Possible New Position
@@ -101,15 +110,6 @@ public class CalcQueen extends PieceMovesCalculator {
         if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
             ChessMove pmoveX = new ChessMove(currentPosition,positionX,null);
             listOfMoves.add(pmoveX);
-        }
-    }
-
-    //Checking that position is inside board
-    public boolean isInside(ChessPosition position){
-        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
-            return true;
-        }else{
-            return false;
         }
     }
 
