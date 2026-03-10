@@ -2,9 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 public class CalcKing extends PieceMovesCalculator {
-
-
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         //Final List
