@@ -48,24 +48,6 @@ public class CalcRook extends PieceMovesCalculator {
             listOfMoves.add(pmoveX);
 
             //UPDATING
-            //TOP
-            if (row == 1 && col == 0) {
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 0);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                } else {
-                    break;
-                }
-            }
-            //BOTTOM
-            if(row == -1 && col == 0){
-                positionX = new ChessPosition(positionX.getRow() -1, positionX.getColumn() + 0);
-                if (isInside(positionX)) {
-                    availableSpotX = board.getPiece(positionX);
-                } else {
-                    break;
-                }
-            }
             //RIGHT
             if(row == 0 && col == 1){
                 positionX = new ChessPosition(positionX.getRow()+0,positionX.getColumn()+1);
@@ -78,6 +60,24 @@ public class CalcRook extends PieceMovesCalculator {
             //LEFT
             if(row == 0 && col == -1){
                 positionX = new ChessPosition(positionX.getRow()+0,positionX.getColumn()-1);
+                if (isInside(positionX)) {
+                    availableSpotX = board.getPiece(positionX);
+                } else {
+                    break;
+                }
+            }
+            //TOP
+            if (row == 1 && col == 0) {
+                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 0);
+                if (isInside(positionX)) {
+                    availableSpotX = board.getPiece(positionX);
+                } else {
+                    break;
+                }
+            }
+            //BOTTOM
+            if(row == -1 && col == 0){
+                positionX = new ChessPosition(positionX.getRow() -1, positionX.getColumn() + 0);
                 if (isInside(positionX)) {
                     availableSpotX = board.getPiece(positionX);
                 } else {
