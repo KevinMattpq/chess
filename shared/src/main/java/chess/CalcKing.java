@@ -4,6 +4,59 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CalcKing extends PieceMovesCalculator {
+    //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
+    public void moveChecker(Collection listOfMoves, ChessBoard board, ChessPosition currentPosition, ChessPosition positionX, int row, int col) {
+        //Possible New Position
+        ChessPiece availableSpotX = board.getPiece(positionX);
+
+        if (availableSpotX == null) {
+            //Possible Move
+            ChessMove pmoveX = new ChessMove(currentPosition, positionX, null);
+            //Adding it to the final list
+            listOfMoves.add(pmoveX);
+
+            //Update Section
+            //TOP
+            if (row == 1 && col == 0) {
+                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 0);
+            }
+            //TOP RIGHT
+            if (row == 1 && col == 1) {
+                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 1);
+            }
+            //TOP LEFT
+            if (row == 1 && col == -1) {
+                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() - 1);
+            }
+            //BOTTOM
+            if (row == -1 && col == 0) {
+                positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() + 0);
+            }
+            //BOTTOM RIGHT
+            if (row == -1 && col == 1) {
+                positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() + 1);
+            }
+            //BOTTOM LEFT
+            if (row == -1 && col == -1) {
+                positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() - 1);
+            }
+            //RIGHT
+            if (row == 0 && col == 1) {
+                positionX = new ChessPosition(positionX.getRow() + 0, positionX.getColumn() + 1);
+            }
+            //LEFT
+            if (row == 0 && col == -1) {
+                positionX = new ChessPosition(positionX.getRow() + 0, positionX.getColumn() - 1);
+            }
+        }
+
+        //IN CASE A PIECE IS BLOCKING
+        if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()) {
+            ChessMove pmoveXK = new ChessMove(currentPosition, positionX, null);
+            listOfMoves.add(pmoveXK);
+        }
+    }
+
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position) {
         //Final List
@@ -65,60 +118,6 @@ public class CalcKing extends PieceMovesCalculator {
             moveChecker(finalList, board, position, left, 0, -1);
         }
         return finalList;
-    }
-
-
-    //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
-    public void moveChecker(Collection listOfMoves, ChessBoard board, ChessPosition currentPosition, ChessPosition positionX, int row, int col) {
-        //Possible New Position
-        ChessPiece availableSpotX = board.getPiece(positionX);
-
-        if (availableSpotX == null) {
-            //Possible Move
-            ChessMove pmoveX = new ChessMove(currentPosition, positionX, null);
-            //Adding it to the final list
-            listOfMoves.add(pmoveX);
-
-            //Update Section
-            //TOP
-            if (row == 1 && col == 0) {
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 0);
-            }
-            //TOP RIGHT
-            if (row == 1 && col == 1) {
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() + 1);
-            }
-            //TOP LEFT
-            if (row == 1 && col == -1) {
-                positionX = new ChessPosition(positionX.getRow() + 1, positionX.getColumn() - 1);
-            }
-            //BOTTOM
-            if (row == -1 && col == 0) {
-                positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() + 0);
-            }
-            //BOTTOM RIGHT
-            if (row == -1 && col == 1) {
-                positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() + 1);
-            }
-            //BOTTOM LEFT
-            if (row == -1 && col == -1) {
-                positionX = new ChessPosition(positionX.getRow() - 1, positionX.getColumn() - 1);
-            }
-            //RIGHT
-            if (row == 0 && col == 1) {
-                positionX = new ChessPosition(positionX.getRow() + 0, positionX.getColumn() + 1);
-            }
-            //LEFT
-            if (row == 0 && col == -1) {
-                positionX = new ChessPosition(positionX.getRow() + 0, positionX.getColumn() - 1);
-            }
-        }
-
-        //IN CASE A PIECE IS BLOCKING
-        if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()) {
-            ChessMove pmoveXK = new ChessMove(currentPosition, positionX, null);
-            listOfMoves.add(pmoveXK);
-        }
     }
 
     //Checking that position is inside board
