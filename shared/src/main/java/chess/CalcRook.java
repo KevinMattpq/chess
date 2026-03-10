@@ -4,6 +4,51 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CalcRook extends PieceMovesCalculator {
+    @Override
+    public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position){
+        //Final List
+        Collection finalList = new ArrayList();
+
+        //Variable that has the position TOP
+        ChessPosition top = new ChessPosition(position.getRow()+1, position.getColumn()+0);
+        //Variable that has the position BOTTOM
+        ChessPosition  bottom = new ChessPosition(position.getRow()-1, position.getColumn()+0);
+        //Variable that has the position  RIGHT
+        ChessPosition right = new ChessPosition(position.getRow()+0, position.getColumn()+1);
+        //Variable that has the position  LEFT
+        ChessPosition left = new ChessPosition(position.getRow()+0, position.getColumn()-1);
+
+        //TOP
+        //Checkins is inside board
+        if (isInside(top)){
+            moveChecker(finalList,board,position,top,1,0);
+        }
+
+        //BOTTOM
+        if(isInside(bottom)){
+            moveChecker(finalList,board,position,bottom,-1,0);
+        }
+
+        //RIGHT
+        if(isInside(right)){
+            moveChecker(finalList,board,position,right,0,1);
+        }
+
+        //LEFT
+        if (isInside(left)){
+            moveChecker(finalList,board,position,left,0,-1);
+        }
+        return finalList;
+    }
+
+    //Checking that position is inside board
+    public boolean isInside(ChessPosition position){
+        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
+            return true;
+        }else{
+            return false;
+        }
+    }
     //moveChecker FUNCTION - I used this one for all of the possible moves (topRight,topLeft,bottomRight,bottomLeft)
     public void moveChecker (Collection listOfMoves, ChessBoard board, ChessPosition currentPosition, ChessPosition positionX, int row, int col){
         //Possible New Position
@@ -58,51 +103,6 @@ public class CalcRook extends PieceMovesCalculator {
         if (availableSpotX != null && availableSpotX.getTeamColor() != board.getPiece(currentPosition).getTeamColor()){
             ChessMove pmoveXR = new ChessMove(currentPosition,positionX,null);
             listOfMoves.add(pmoveXR);
-        }
-    }
-
-    @Override
-    public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position){
-        //Final List
-        Collection finalList = new ArrayList();
-
-        //Variable that has the position TOP
-        ChessPosition top = new ChessPosition(position.getRow()+1, position.getColumn()+0);
-        //Variable that has the position BOTTOM
-        ChessPosition  bottom = new ChessPosition(position.getRow()-1, position.getColumn()+0);
-        //Variable that has the position  RIGHT
-        ChessPosition right = new ChessPosition(position.getRow()+0, position.getColumn()+1);
-        //Variable that has the position  LEFT
-        ChessPosition left = new ChessPosition(position.getRow()+0, position.getColumn()-1);
-
-        //TOP
-        //Checkins is inside board
-        if (isInside(top)){
-            moveChecker(finalList,board,position,top,1,0);
-        }
-
-        //BOTTOM
-        if(isInside(bottom)){
-            moveChecker(finalList,board,position,bottom,-1,0);
-        }
-
-        //RIGHT
-        if(isInside(right)){
-            moveChecker(finalList,board,position,right,0,1);
-        }
-
-        //LEFT
-        if (isInside(left)){
-            moveChecker(finalList,board,position,left,0,-1);
-        }
-        return finalList;
-    }
-    //Checking that position is inside board
-    public boolean isInside(ChessPosition position){
-        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
-            return true;
-        }else{
-            return false;
         }
     }
 }
