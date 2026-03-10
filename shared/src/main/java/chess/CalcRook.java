@@ -61,15 +61,6 @@ public class CalcRook extends PieceMovesCalculator {
         }
     }
 
-    //Checking that position is inside board
-    public boolean isInside(ChessPosition position){
-        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     @Override
     public Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition position){
         //Final List
@@ -105,5 +96,13 @@ public class CalcRook extends PieceMovesCalculator {
             moveChecker(finalList,board,position,left,0,-1);
         }
         return finalList;
+    }
+    //Checking that position is inside board
+    public boolean isInside(ChessPosition position){
+        if(position.getRow() > 0 && position.getRow() < 9 && position.getColumn() > 0 && position.getColumn() < 9 ){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
