@@ -117,7 +117,7 @@ public class DatabaseManager {
         }
     }
 
-//Takes a sql statement and a bunch of paramaters
+//Takes a sql statement and parameters
     public static int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
