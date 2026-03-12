@@ -82,24 +82,24 @@ public class DatabaseManager {
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`),
+              PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
-            CREATE TABLE IF NOT EXISTS  listOfGames(
+            CREATE TABLE IF NOT EXISTS  listOfGames (
               `gameId` INT NOT NULL,
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256),
               `game` TEXT,
-              `PRIMARY KEY(`gameID`),
+              PRIMARY KEY (`gameId`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
             CREATE TABLE IF NOT EXISTS  listOfAuthTokens(
              `authToken` varchar(256) NOT NULL,
              `username` varchar(256) NOT NULL,
-              PRIMARY KEY(`AuthToken`),
+              PRIMARY KEY(`AuthToken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
@@ -113,7 +113,7 @@ public class DatabaseManager {
                 }
             }
         } catch (DataAccessException | SQLException ex) {
-            throw new DataAccessException("Unable to configure database: %s");
+            throw new DataAccessException("Unable to configure database");
         }
     }
 
@@ -127,16 +127,10 @@ public class DatabaseManager {
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
                 }
                 ps.executeUpdate();
-
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
                 return 0;
             }
         } catch (SQLException | DataAccessException e) {
-            throw new DataAccessException("unable to update database: %s, %s");
+            throw new DataAccessException("unable to update database" + e.getMessage());
         }
     }
 }

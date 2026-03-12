@@ -33,7 +33,8 @@ public class MySQLAuthData implements DAOAuthDataInterface {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         //Getting the value of column
-                        return readAuthToken(rs.getString("authToken"));
+                        AuthData responseData = new AuthData(rs.getString("authToken"),rs.getString("username"));
+                        return responseData;
                     }
                 }
             }

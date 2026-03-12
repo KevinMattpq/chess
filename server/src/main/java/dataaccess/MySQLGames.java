@@ -31,7 +31,7 @@ public class MySQLGames implements DAOGamesInterface{
     }
 
     @Override
-    public GameData readGame(int gameID) {
+    public GameData readGame(int gameID) throws DataAccessException{
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameId FROM listOfGames WHERE gameID = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
