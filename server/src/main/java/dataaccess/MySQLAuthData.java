@@ -25,11 +25,11 @@ public class MySQLAuthData implements DAOAuthDataInterface {
     }
 
     @Override
-    public AuthData readAuthToken(String authToken) throws DataAccessException {
+    public AuthData readAuthToken(String inputAuthToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT authToken FROM listOfAuthTokens WHERE authToken = ?";
+            var statement = "SELECT authToken,username FROM listOfAuthTokens WHERE authToken = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, authToken);
+                ps.setString(1, inputAuthToken);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         //Getting the value of column

@@ -10,13 +10,14 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MySQLAuthTests {
     public MySQLAuthData sqlAuth;
 
-    //Unit test for Autho
+    //Unit test for Auth
     @BeforeEach
     public void createSetUp() {
         try {
@@ -29,7 +30,8 @@ public class MySQLAuthTests {
 
     @Test
     public void createToken (){
-        AuthData test = new AuthData("bce93eb4-dc4d-4225-a723-d9e11d09cbb8","Kevin");
+        String authToken = UUID.randomUUID().toString();
+        AuthData test = new AuthData(authToken,"Kevin");
         assertDoesNotThrow(()->
                 sqlAuth.createAuthToken(test.username()));
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -42,13 +44,24 @@ public class MySQLAuthTests {
                         String readUsername = rs.getString("username");
                         assertEquals(test.username(),readUsername);
                         String readAuthToken = rs.getString("authToken");
-                        assertEquals(test.authToken(),readAuthToken);
+                        assertNotNull(readAuthToken);
                     }
                 }
             }
         } catch (Exception e) {
             throw new AssertionError();
         }
+    }
+
+    @Test
+    public void readAuthToken() throws DataAccessException {
+        String username = "John";
+        AuthData test = sqlAuth.createAuthToken(username);
+        AuthData readResponse = sqlAuth.readAuthToken(test.authToken());
+        String readUsername = readResponse.username();
+        assertEquals(test.username(),readUsername);
+        String readAuthToken = readResponse.authToken();
+        assertEquals(test.authToken(),readAuthToken);
     }
 
 }

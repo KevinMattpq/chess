@@ -39,7 +39,7 @@ public class MySQLGames implements DAOGamesInterface{
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         //Getting the value of column
-                        return readGame(rs.getInt("gameID"));
+                        return readGame(rs.getInt("gameId"));
                     }
                 }
             }
