@@ -1,41 +1,43 @@
 package dataaccess;
 
-import com.google.gson.Gson;
 import model.UserData;
-import server.service.ResponseException;
-import
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import static dataaccess.DatabaseManager.executeUpdate;
 
 public class MySQLUsers implements DAOUsersInterface{
+    public MySQLUsers() throws DataAccessException {
+        DatabaseManager.configureDatabase();
+    }
 
-    public void createUser(UserData userData) throws ResponseException {
+    public void createUser(UserData userData) throws DataAccessException {
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
         executeUpdate(statement, userData.username(),userData.password(),userData.email());
     }
 
-    public UserData readUser(String username) throws ResponseException {
+    public UserData readUser(String username) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, json FROM users WHERE username = username";
+            var statement = "SELECT username FROM users WHERE username = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setInt(1, id);
+                ps.setString(1, username);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        //return readUser(rs);
+                        //Getting the value of column
+                        return readUser(rs.getString("username"));
                     }
                 }
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+            throw new DataAccessException("Can read from database");
         }
+        return null;
     }
 
-    public void deleteAllUsers() throws ResponseException {
+    public void deleteAllUsers() throws DataAccessException {
         var statement = "DELETE FROM users";
     }
 

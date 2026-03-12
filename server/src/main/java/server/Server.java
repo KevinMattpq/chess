@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.*;
-import server.service.ResponseException;
 import server.service.Service;
 
 public class Server {

@@ -1,7 +1,5 @@
 package dataaccess;
 
-import server.service.ResponseException;
-
 import java.sql.*;
 import java.util.Properties;
 
@@ -78,9 +76,9 @@ public class DatabaseManager {
     }
 
 
-    private final String[] createStatements = {
+    private static final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  user (
+            CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
@@ -93,7 +91,7 @@ public class DatabaseManager {
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256),
-              `game` 2D_ARRAY,
+              `game` TEXT,
               `PRIMARY KEY(`gameID`),
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
@@ -106,7 +104,7 @@ public class DatabaseManager {
             """
     };
 
-    private void configureDatabase() throws ResponseException, DataAccessException {
+    public static void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String statement : createStatements) {
@@ -114,21 +112,20 @@ public class DatabaseManager {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));
+        } catch (DataAccessException | SQLException ex) {
+            throw new DataAccessException("Unable to configure database: %s");
         }
     }
 
 //Takes a sql statement and a bunch of paramaters
-    public static int executeUpdate(String statement, Object... params) throws ResponseException {
+    public static int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
                     if (param instanceof String p) ps.setString(i + 1, p);
+                    //I think I do not need the rest because all of my paremeter are strings
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param instanceof PetType p) ps.setString(i + 1, p.toString());
-                    else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
 
@@ -140,7 +137,7 @@ public class DatabaseManager {
                 return 0;
             }
         } catch (SQLException | DataAccessException e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+            throw new DataAccessException("unable to update database: %s, %s");
         }
     }
 }

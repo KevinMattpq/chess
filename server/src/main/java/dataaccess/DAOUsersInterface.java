@@ -2,10 +2,9 @@ package dataaccess;
 
 
 import model.UserData;
-import server.service.ResponseException;
 
 public interface DAOUsersInterface {
-    void createUser(UserData userData) throws ResponseException;
-    UserData readUser(String userName) throws ResponseException;
-    void deleteAllUsers() throws ResponseException;
+    void createUser(UserData userData) throws DataAccessException;
+    UserData readUser(String userName) throws DataAccessException;
+    void deleteAllUsers() throws DataAccessException;
 }
