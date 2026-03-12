@@ -20,8 +20,8 @@ public class MySQLAuthData implements DAOAuthDataInterface {
         String username = usernameInput;
         AuthData result = new AuthData(authToken,username);
         var statement = "INSERT INTO listOfAuthTokens (authToken , username) values (?, ?)";
-        int response = executeUpdate(statement, result.authToken(),result.username());
-        return null;
+        executeUpdate(statement, result.authToken(),result.username());
+        return result;
     }
 
     @Override
