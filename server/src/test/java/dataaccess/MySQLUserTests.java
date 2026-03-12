@@ -52,4 +52,17 @@ public class MySQLUserTests {
         }
     }
 
+    @Test
+    public void readUser() throws DataAccessException {
+        UserData test = new UserData("Kevin","Admin","kpAdmin");
+        sqlUsers.createUser(test);
+        UserData readResponse = sqlUsers.readUser(test.username());
+        String readUsername = readResponse.username();
+        assertEquals(test.username(),readUsername);
+        String readPassword = readResponse.password();
+        assertTrue(BCrypt.checkpw("Admin", readPassword));
+        String readEmail = readResponse.email();
+        assertEquals(test.email(),readEmail);
+    }
+
 }
