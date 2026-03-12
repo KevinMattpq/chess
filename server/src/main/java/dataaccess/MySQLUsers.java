@@ -32,13 +32,14 @@ public class MySQLUsers implements DAOUsersInterface{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("Can read from database");
+            throw new DataAccessException("Can't read from database");
         }
         return null;
     }
 
     public void deleteAllUsers() throws DataAccessException {
-        var statement = "DELETE FROM users";
+        var statement = "TRUNCATE TABLE users";
+        executeUpdate(statement);
     }
 
 

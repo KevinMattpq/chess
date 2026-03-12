@@ -97,7 +97,7 @@ public class DatabaseManager {
             """,
             """
             CREATE TABLE IF NOT EXISTS  listOfAuthTokens(
-             `AuthToken` varchar(256) NOT NULL,
+             `authToken` varchar(256) NOT NULL,
              `username` varchar(256) NOT NULL,
               PRIMARY KEY(`AuthToken`),
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
@@ -124,7 +124,6 @@ public class DatabaseManager {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
                     if (param instanceof String p) ps.setString(i + 1, p);
-                    //I think I do not need the rest because all of my paremeter are strings
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
                 }
                 ps.executeUpdate();
