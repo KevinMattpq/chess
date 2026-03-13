@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
+import model.UserData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -69,7 +70,25 @@ public class MySQLGames implements DAOGamesInterface{
         var statement = "SELECT * FROM listOfGames";
         Collection <GameData> listOfGames = new ArrayList<>();
         executeUpdate(statement);
-        return List.of();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                     while(rs.next()){
+                        int gameId = rs.getInt("gameId");
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
+                        String gameName = rs.getString("gameName");
+                        String game = rs.getString("game");
+                        ChessGame gameChess = new Gson().fromJson(game,ChessGame.class);
+                        GameData finalGame = new GameData(gameId,whiteUsername,blackUsername,gameName,gameChess);
+                        listOfGames.add(finalGame);
+                    }
+                }
+            }
+            return listOfGames;
+        } catch (Exception e) {
+            throw new DataAccessException("Can't read from database",null);
+        }
     }
 
     @Override
