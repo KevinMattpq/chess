@@ -16,7 +16,6 @@ import java.util.List;
 import static dataaccess.DatabaseManager.executeUpdate;
 
 public class MySQLGames implements DAOGamesInterface{
-    private HashSet<Integer> usedId = new HashSet<>();
     public MySQLGames() throws DataAccessException {
         DatabaseManager.configureDatabase();
     }
@@ -79,7 +78,8 @@ public class MySQLGames implements DAOGamesInterface{
             throw new DataAccessException("Game Data can not be null");
         }
         var statement = "UPDATE listOfGames SET whiteUsername=?, blackUsername=?, gameName=?, game=?";
-        executeUpdate(statement,newGameData.whiteUsername(),newGameData.blackUsername(),newGameData.gameName(),new Gson().toJson(newGameData.game()));
+        executeUpdate(statement,newGameData.whiteUsername(),newGameData.blackUsername(),
+                newGameData.gameName(),new Gson().toJson(newGameData.game()));
         return newGameData;
     }
 
