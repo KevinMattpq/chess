@@ -31,7 +31,15 @@ public class Server {
     }
 
     private void clear(Context ctx){
-        service.clearAll();
+        try{
+            service.clearAll();
+        }catch (ResponseException e){
+            if(e.getMessage() == "Database Error"){
+                ctx.status(500);
+                ctx.result(e.toJson());
+            }
+        }
+
     }
 
     private  void register(Context ctx) throws ResponseException {

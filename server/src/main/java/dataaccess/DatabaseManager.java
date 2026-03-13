@@ -3,6 +3,9 @@ package dataaccess;
 import java.sql.*;
 import java.util.Properties;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 public class DatabaseManager {
     private static String databaseName;
     private static String dbUsername;
@@ -87,9 +90,9 @@ public class DatabaseManager {
             """,
             """
             CREATE TABLE IF NOT EXISTS  listOfGames (
-              `gameId` INT NOT NULL,
-              `whiteUsername` varchar(256),
-              `blackUsername` varchar(256),
+              `gameId` INT NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(256) DEFAULT NULL,
+              `blackUsername` varchar(256) DEFAULT NULL,
               `gameName` varchar(256),
               `game` TEXT,
               PRIMARY KEY (`gameId`)
@@ -120,13 +123,18 @@ public class DatabaseManager {
 //Takes a sql statement and parameters
     public static int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+            try (PreparedStatement ps = conn.prepareStatement(statement,RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
                     if (param instanceof String p) ps.setString(i + 1, p);
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
+                    else if (param == null) ps.setNull(i + 1, NULL);
                 }
                 ps.executeUpdate();
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
                 return 0;
             }
         } catch (SQLException | DataAccessException e) {

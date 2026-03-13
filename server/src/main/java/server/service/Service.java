@@ -1,9 +1,7 @@
 package server.service;
 
+import dataaccess.*;
 import model.*;
-import dataaccess.DataAccessGames;
-import dataaccess.DataAccessUsers;
-import dataaccess.DataAccessAuthData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,18 +9,38 @@ import java.util.List;
 import java.util.Objects;
 
 public class Service {
-    DataAccessGames dataGames = new DataAccessGames();
-    DataAccessUsers dataUsers = new DataAccessUsers();
-    DataAccessAuthData dataAuth = new DataAccessAuthData();
+    //This where I need to change .
+    DAOUsersInterface dataUsers;
+    DAOGamesInterface dataGames;
+    DAOAuthDataInterface dataAuth;
+   public Service(){
+       try{
+            dataGames = new MySQLGames();
+            dataUsers = new MySQLUsers();
+            dataAuth = new MySQLAuthData();
 
-    public  void clearAll(){
-        dataGames.clearGames();
-        dataUsers.deleteAllUsers();
-        dataAuth.deleteAllAuthTokens();
+
+       }catch(DataAccessException e){
+
+       }
+   }
+
+
+
+    public  void clearAll() throws ResponseException{
+       try{
+           dataGames.clearGames();
+           dataUsers.deleteAllUsers();
+           dataAuth.deleteAllAuthTokens();
+       } catch (DataAccessException e){
+           throw new ResponseException("Database Error");
+
+       }
+
     }
 
     public void logout(String authToken) throws  ResponseException{
-        //Checking if there is an authToken - "Login"
+       //Checking if there is an authToken - "Login"
         if(dataAuth.readAuthToken(authToken) == null){
             throw new ResponseException("Error: unauthorized");
         }
