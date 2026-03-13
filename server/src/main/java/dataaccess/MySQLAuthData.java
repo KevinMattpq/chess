@@ -49,6 +49,9 @@ public class MySQLAuthData implements DAOAuthDataInterface {
 
     @Override
     public void deleteAuthToken(String authToken) throws DataAccessException {
+        if(authToken == null){
+            throw new DataAccessException("AuthToken can not be null");
+        }
         var statement = "DELETE FROM listOfAuthTokens WHERE authToken=?";
         executeUpdate(statement,authToken);
     }

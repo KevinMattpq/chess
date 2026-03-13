@@ -84,6 +84,31 @@ public class MySQLAuthTests {
         });
     }
 
+    @Test
+    public void deleteAuthToken() throws DataAccessException {
+        assertDoesNotThrow(()->{
+            String authToken = UUID.randomUUID().toString();
+            sqlAuth.deleteAuthToken(authToken);
+        });
+    }
+
+    @Test
+    public void deleteAuthTokenFail() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class,()->{
+            sqlAuth.deleteAuthToken(null);
+        });
+    }
+
+    @Test
+    public void deleteAllAuthToken() throws DataAccessException {
+        assertDoesNotThrow(()->{
+            String authToken = UUID.randomUUID().toString();
+            sqlAuth.createAuthToken("Kevin");
+            sqlAuth.createAuthToken("Alondra");
+            sqlAuth.createAuthToken("Saul");
+            sqlAuth.deleteAuthToken(authToken);
+        });
+    }
 }
 
 

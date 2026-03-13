@@ -1,6 +1,7 @@
 package dataaccess;
 
 import com.sun.source.tree.AssertTree;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,4 +83,12 @@ public class MySQLUserTests {
         });
     }
 
+    @Test
+    public void deleteAllUsers(){
+        assertDoesNotThrow(()->{
+            UserData usernameTest = new UserData("TestName","PasswordTest","random@email.com");
+            sqlUsers.createUser(usernameTest);
+            sqlUsers.deleteAllUsers();
+        });
+    }
 }

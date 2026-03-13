@@ -86,7 +86,6 @@ public class Server {
         }
     }
 
-
     public void  logout(Context ctx) throws ResponseException {
         String authToken = ctx.header("authorization");
         try {
@@ -102,7 +101,6 @@ public class Server {
             }
         }
     }
-
 
     public void createGame(Context ctx) throws ResponseException{
         GameData userData = new Gson().fromJson(ctx.body(),GameData.class);
