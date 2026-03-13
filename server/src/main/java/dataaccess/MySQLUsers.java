@@ -22,6 +22,9 @@ public class MySQLUsers implements DAOUsersInterface{
     }
 
     public UserData readUser(String username) throws DataAccessException {
+        if(username == null){
+            throw new DataAccessException("Username is necessary to read from database");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT username,password,email FROM users WHERE username = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {

@@ -30,7 +30,7 @@ public class Server {
         return javalin.port();
     }
 
-    private void clear(Context ctx){
+    private void clear(Context ctx) throws ResponseException {
         try{
             service.clearAll();
         }catch (ResponseException e){
@@ -52,8 +52,11 @@ public class Server {
             if(errorResponse.getMessage() == "Error: Bad Request"){
                 ctx.status(400);
                 ctx.result(errorResponse.toJson());
-            }else {
+            }else if(errorResponse.getMessage() == "Error: Username already taken"){
                 ctx.status(403);
+                ctx.result(errorResponse.toJson());
+            } else if (errorResponse.getMessage() == "Database Error") {
+                ctx.status(500);
                 ctx.result(errorResponse.toJson());
             }
         }

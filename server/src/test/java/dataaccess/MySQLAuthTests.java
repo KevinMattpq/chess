@@ -2,7 +2,9 @@ package dataaccess;
 
 import com.sun.source.tree.AssertTree;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -10,6 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +56,15 @@ public class MySQLAuthTests {
         }
     }
 
+    //Negative
+    @Test
+    public void createTokenFail (){
+        Assertions.assertThrows(DataAccessException.class, ()->{
+            String username = null;
+            sqlAuth.createAuthToken(username);
+        });
+    }
+
     @Test
     public void readAuthToken() throws DataAccessException {
         String username = "John";
@@ -62,6 +74,14 @@ public class MySQLAuthTests {
         assertEquals(test.username(),readUsername);
         String readAuthToken = readResponse.authToken();
         assertEquals(test.authToken(),readAuthToken);
+    }
+
+    @Test
+    public void readAuthTokenFail() throws DataAccessException {
+        Assertions.assertThrows(DataAccessException.class, ()->{
+            String invalidToken = null;
+            sqlAuth.readAuthToken(invalidToken);
+        });
     }
 
 }

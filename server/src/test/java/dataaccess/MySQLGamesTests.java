@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -36,6 +37,14 @@ public class MySQLGamesTests {
         assertDoesNotThrow(()->
                 sqlGames.createGame(gameNameTest));
     }
+    @Test
+    public void createGameFail() {
+        String gameNameTest = null;
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            sqlGames.createGame(gameNameTest);
+        });
+    }
+
 
     @Test
     public void readGameTest(){
@@ -44,6 +53,14 @@ public class MySQLGamesTests {
                     GameData readResponse = sqlGames.readGame(testGame.gameID());
                     assertEquals("KevinGame",readResponse.gameName());
                 });
+    }
+
+    @Test
+    public void readGameFail(){
+        int gameId = -1;
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            sqlGames.readGame(gameId);
+        });
     }
 
     @Test
@@ -56,6 +73,11 @@ public class MySQLGamesTests {
 
             assertEquals(updatedGame,testGame);
         });
+    }
 
+    @Test void updateGameTestFail(){
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            sqlGames.updateGame(null);
+        });
     }
 }

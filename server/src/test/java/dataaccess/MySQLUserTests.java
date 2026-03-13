@@ -2,6 +2,7 @@ package dataaccess;
 
 import com.sun.source.tree.AssertTree;
 import model.UserData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -53,6 +54,14 @@ public class MySQLUserTests {
     }
 
     @Test
+    public  void createUserFail() throws DataAccessException{
+        Assertions.assertThrows(DataAccessException.class, ()->{
+            UserData test = new UserData(null,"Admin","kpAdmin");
+            sqlUsers.createUser(test);
+        });
+    }
+
+    @Test
     public void readUser() throws DataAccessException {
         UserData test = new UserData("Kevin","Admin","kpAdmin");
         sqlUsers.createUser(test);
@@ -63,6 +72,13 @@ public class MySQLUserTests {
         assertTrue(BCrypt.checkpw("Admin", readPassword));
         String readEmail = readResponse.email();
         assertEquals(test.email(),readEmail);
+    }
+
+    @Test void readUserFail() throws DataAccessException{
+        Assertions.assertThrows(DataAccessException.class, ()->{
+            String usernameTest = null;
+            sqlUsers.readUser(usernameTest);
+        });
     }
 
 }

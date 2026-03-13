@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +24,9 @@ public class MySQLGames implements DAOGamesInterface{
 
     @Override
     public GameData createGame(String userGameName) throws DataAccessException {
+        if(userGameName == null){
+            throw new DataAccessException("Game name is required");
+        }
         String whiteUsername = null;
         String blackUsername = null;
         ChessGame newGame = new ChessGame();
@@ -40,6 +44,10 @@ public class MySQLGames implements DAOGamesInterface{
 
     @Override
     public GameData readGame(int gameID) throws DataAccessException{
+        if(gameID == 0 || gameID <= 0){
+            throw new DataAccessException("ID must be greater than 0");
+        }
+
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameId,whiteUsername,blackUsername,gameName,game FROM listOfGames WHERE gameId = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -60,22 +68,20 @@ public class MySQLGames implements DAOGamesInterface{
     @Override
     public Collection<GameData> readAllGames() throws DataAccessException {
         var statement = "SELECT * FROM listOfGames";
+        Collection <GameData> listOfGames = new ArrayList<>();
         executeUpdate(statement);
         return List.of();
     }
 
     @Override
     public GameData updateGame(GameData newGameData) throws DataAccessException {
+        if(newGameData == null){
+            throw new DataAccessException("Game Data can not be null");
+        }
         var statement = "UPDATE listOfGames SET whiteUsername=?, blackUsername=?, gameName=?, game=?";
         executeUpdate(statement,newGameData.whiteUsername(),newGameData.blackUsername(),newGameData.gameName(),new Gson().toJson(newGameData.game()));
         return newGameData;
     }
-
-//    private int sqlIdGenerator(){
-//        int newID = usedId.size() + 1;
-//        usedId.add(newID);
-//        return newID;
-//    }
 
     private  GameData readResult (ResultSet rs) throws SQLException {
         int id = rs.getInt("gameId");

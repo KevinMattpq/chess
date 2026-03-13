@@ -26,6 +26,9 @@ public class MySQLAuthData implements DAOAuthDataInterface {
 
     @Override
     public AuthData readAuthToken(String inputAuthToken) throws DataAccessException {
+        if(inputAuthToken == null){
+            throw new DataAccessException("AuthToken can not be null");
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT authToken,username FROM listOfAuthTokens WHERE authToken = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
