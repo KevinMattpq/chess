@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.*;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Service {
-    //This where I need to change .
     DAOUsersInterface dataUsers;
     DAOGamesInterface dataGames;
     DAOAuthDataInterface dataAuth;
@@ -18,10 +18,8 @@ public class Service {
             dataGames = new MySQLGames();
             dataUsers = new MySQLUsers();
             dataAuth = new MySQLAuthData();
-
-
        }catch(DataAccessException e){
-
+           throw new RuntimeException("Error: Creating DAO");
        }
    }
 
@@ -33,7 +31,7 @@ public class Service {
            dataUsers.deleteAllUsers();
            dataAuth.deleteAllAuthTokens();
        } catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
 
        }
 
@@ -83,7 +81,7 @@ public class Service {
            //Getting the information of the User witht that username
            UserData user = dataUsers.readUser(userData.username());
            //Password Check
-           if(!user.password().equals(userData.password())){
+           if(!BCrypt.checkpw(userData.password(), user.password())){
                throw  new ResponseException("Error: unauthorized");
            }
 

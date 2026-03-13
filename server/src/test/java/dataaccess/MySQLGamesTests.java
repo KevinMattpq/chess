@@ -13,6 +13,8 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,6 +64,19 @@ public class MySQLGamesTests {
             sqlGames.readGame(gameId);
         });
     }
+
+//    @Test
+//    public void readAllGamesTest(){
+//        assertDoesNotThrow(()-> {
+//            Collection<GameData> myList = new ArrayList<>();
+//            GameData testGame1 = sqlGames.createGame("Game1");
+//            GameData testGame2 = sqlGames.createGame("Game2");
+//            myList.add(testGame1);
+//            myList.add(testGame2);
+//            Collection<GameData> readResponse = sqlGames.readAllGames();
+//            assertEquals(myList,readResponse);
+//        });
+//    }
 
     @Test
     public void updateGameTest() {

@@ -90,6 +90,9 @@ public class Server {
             if (logoutError.getMessage() == "Error: unauthorized") {
                 ctx.status(401);
                 ctx.result(logoutError.toJson());
+            }if (logoutError.getMessage() == "Error: Database Error") {
+                ctx.status(500);
+                ctx.result(logoutError.toJson());
             }
         }
     }
