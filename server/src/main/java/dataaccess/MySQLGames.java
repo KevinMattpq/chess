@@ -38,7 +38,7 @@ public class MySQLGames implements DAOGamesInterface{
 
     @Override
     public void clearGames() throws DataAccessException{
-        var statement = "TRUNCATE TABLE users";
+        var statement = "TRUNCATE TABLE listOfGames";
         executeUpdate(statement);
     }
 
@@ -69,7 +69,6 @@ public class MySQLGames implements DAOGamesInterface{
     public Collection<GameData> readAllGames() throws DataAccessException {
         var statement = "SELECT * FROM listOfGames";
         Collection <GameData> listOfGames = new ArrayList<>();
-        executeUpdate(statement);
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (ResultSet rs = ps.executeQuery()) {

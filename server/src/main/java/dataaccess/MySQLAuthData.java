@@ -48,9 +48,9 @@ public class MySQLAuthData implements DAOAuthDataInterface {
     }
 
     @Override
-    public void deleteAuthToken(String username) throws DataAccessException {
-        var statement = "DELETE FROM listOfAuthTokens WHERE username=?";
-        executeUpdate(statement,username);
+    public void deleteAuthToken(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM listOfAuthTokens WHERE authToken=?";
+        executeUpdate(statement,authToken);
     }
 
     @Override
