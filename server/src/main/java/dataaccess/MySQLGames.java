@@ -95,9 +95,9 @@ public class MySQLGames implements DAOGamesInterface{
         if(newGameData == null){
             throw new DataAccessException("Game Data can not be null");
         }
-        var statement = "UPDATE listOfGames SET whiteUsername=?, blackUsername=?, gameName=?, game=?";
+        var statement = "UPDATE listOfGames SET whiteUsername=?, blackUsername=?, gameName=?, game=? WHERE gameId=?";
         executeUpdate(statement,newGameData.whiteUsername(),newGameData.blackUsername(),
-                newGameData.gameName(),new Gson().toJson(newGameData.game()));
+                newGameData.gameName(),new Gson().toJson(newGameData.game()),newGameData.gameID());
         return newGameData;
     }
 

@@ -34,6 +34,14 @@ public class MySQLGamesTests {
     }
 
     @Test
+    public void clearTest() throws DataAccessException {
+        assertDoesNotThrow(()->
+                sqlGames.createGame("Game1"));
+                sqlGames.clearGames();
+    }
+
+
+    @Test
     public void createGame(){
         String gameNameTest = "GameTest1";
         assertDoesNotThrow(()->
@@ -65,18 +73,29 @@ public class MySQLGamesTests {
         });
     }
 
-//    @Test
-//    public void readAllGamesTest(){
-//        assertDoesNotThrow(()-> {
-//            Collection<GameData> myList = new ArrayList<>();
-//            GameData testGame1 = sqlGames.createGame("Game1");
-//            GameData testGame2 = sqlGames.createGame("Game2");
-//            myList.add(testGame1);
-//            myList.add(testGame2);
-//            Collection<GameData> readResponse = sqlGames.readAllGames();
-//            assertEquals(myList,readResponse);
-//        });
-//    }
+    @Test
+    public void readAllGamesTest(){
+        assertDoesNotThrow(()-> {
+            Collection<GameData> myList = new ArrayList<>();
+            GameData testGame1 = sqlGames.createGame("Game1");
+            GameData testGame2 = sqlGames.createGame("Game2");
+            myList.add(testGame1);
+            myList.add(testGame2);
+            Collection<GameData> readResponse = sqlGames.readAllGames();
+            assertEquals(myList,readResponse);
+        });
+    }
+
+    @Test
+    public  void readAllGamesTestFail(){
+        assertDoesNotThrow(()-> {
+            Collection<GameData> myList = new ArrayList<>();
+            Collection<GameData> readResponse = sqlGames.readAllGames();
+            assertEquals(myList,readResponse);
+        });
+    }
+
+
 
     @Test
     public void updateGameTest() {

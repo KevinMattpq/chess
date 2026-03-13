@@ -34,7 +34,7 @@ public class Server {
         try{
             service.clearAll();
         }catch (ResponseException e){
-            if(e.getMessage() == "Database Error"){
+            if(e.getMessage() == "Error: Database Error"){
                 ctx.status(500);
                 ctx.result(e.toJson());
             }
@@ -55,7 +55,7 @@ public class Server {
             }else if(errorResponse.getMessage() == "Error: Username already taken"){
                 ctx.status(403);
                 ctx.result(errorResponse.toJson());
-            } else if (errorResponse.getMessage() == "Database Error") {
+            } else if (errorResponse.getMessage() == "Error: Database Error") {
                 ctx.status(500);
                 ctx.result(errorResponse.toJson());
             }
@@ -78,6 +78,11 @@ public class Server {
                 ctx.status(401);
                 ctx.result(loginError.toJson());
             }
+            if (loginError.getMessage() == "Error: Database Error") {
+                ctx.status(500);
+                ctx.result(loginError.toJson());
+            }
+
         }
     }
 
@@ -90,7 +95,8 @@ public class Server {
             if (logoutError.getMessage() == "Error: unauthorized") {
                 ctx.status(401);
                 ctx.result(logoutError.toJson());
-            }if (logoutError.getMessage() == "Error: Database Error") {
+            }
+            if (logoutError.getMessage() == "Error: Database Error") {
                 ctx.status(500);
                 ctx.result(logoutError.toJson());
             }
@@ -115,6 +121,11 @@ public class Server {
                 ctx.status(401);
                 ctx.result(createError.toJson());
             }
+            if(createError.getMessage() == "Error: Database Error"){
+                ctx.status(500);
+                ctx.result(createError.toJson());
+            }
+
         }
     }
 
@@ -128,6 +139,10 @@ public class Server {
         }catch (ResponseException listOfGamesError){
             if(listOfGamesError.getMessage() == "Error: Unauthorized"){
                 ctx.status(401);
+                ctx.result(listOfGamesError.toJson());
+            }
+            if(listOfGamesError.getMessage() == "Error: Database Error"){
+                ctx.status(500);
                 ctx.result(listOfGamesError.toJson());
             }
         }
@@ -150,6 +165,10 @@ public class Server {
             }
             if(joinGameError.getMessage() == "Error: AlreadyTaken"){
                 ctx.status(403);
+                ctx.result(joinGameError.toJson());
+            }
+            if(joinGameError.getMessage() == "Error: Database Error"){
+                ctx.status(500);
                 ctx.result(joinGameError.toJson());
             }
 

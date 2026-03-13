@@ -45,7 +45,7 @@ public class Service {
            }
            dataAuth.deleteAuthToken(authToken);
        }catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
 
        }
 
@@ -63,7 +63,7 @@ public class Service {
            dataUsers.createUser(userData);
            return dataAuth.createAuthToken(userData.username());
        }catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
        }
 
     }
@@ -88,7 +88,7 @@ public class Service {
            dataUsers.readUser(userData.username());
            return dataAuth.createAuthToken(userData.username());
        }catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
        }
 
     }
@@ -102,7 +102,7 @@ public class Service {
            GameData newGame = dataGames.createGame(gameData.gameName());
            return new CreateGameResult(newGame.gameID());
        } catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
        }
     }
 
@@ -114,7 +114,7 @@ public class Service {
            }
            return dataAuth.readAuthToken(authToken);
        } catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
        }
 
     }
@@ -147,7 +147,7 @@ public class Service {
            JoinGameRequest newJoinGame = new JoinGameRequest(userData.playerColor(), userData.gameID());
            return newJoinGame;
        } catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
        }
 
     }
@@ -160,7 +160,7 @@ public class Service {
            return new ListOfGamesResult(dataGames.readAllGames());
 
        } catch (DataAccessException e){
-           throw new ResponseException("Database Error");
+           throw new ResponseException("Error: Database Error");
        }
     }
 }
