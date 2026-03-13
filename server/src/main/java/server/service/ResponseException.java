@@ -5,8 +5,6 @@ import com.google.gson.Gson;
 import java.util.Map;
 
 public class ResponseException extends Exception{
-    public static Object Code;
-
     public ResponseException(String message){
         super(message);
     }
