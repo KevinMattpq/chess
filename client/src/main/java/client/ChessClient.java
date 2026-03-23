@@ -1,6 +1,8 @@
 package client;
 
 import model.UserData;
+import server.Server;
+import server.ServerFacade;
 import server.service.ResponseException;
 
 import java.util.Arrays;
@@ -8,6 +10,10 @@ import java.util.Scanner;
 
 public class ChessClient {
     private State state = State.SIGNEDOUT;
+
+    public ChessClient(String serverUrl) throws ResponseException{
+        ServerFacade server = new ServerFacade(serverUrl);
+    }
 
     public void run(){
         System.out.println("♕ Welcome to Chess. Sign in to start.");
@@ -65,8 +71,8 @@ public class ChessClient {
         String username = params[0];
         String password = params[1];
         state = State.SIGNEDIN;
-
         //Calling function from service PENDING
+
         return "Welcome you are logged in!";
     }
 
@@ -80,7 +86,7 @@ public class ChessClient {
         UserData newUser = new UserData(username,password,email);
 
         //Calling function from server PENDING
-        service.regiter(newUser);
+        //serverFacade.regiter(newUser);
         return "Successfully registered.";
     }
     public String quit(String... params) throws ResponseException {
@@ -96,8 +102,11 @@ public class ChessClient {
     public String help() {
         if (state == State.SIGNEDOUT) {
             return """
-                    - signIn <yourname>
-                    - quit
+                    Options:
+                    Login as an existing user: "l", "login" <USERNAME> <PASSWORD>
+                    Register a new user: "r", "register" <USERNAME> <PASSWORD> <EMAIL>
+                    Exit the program: "q", "quit"
+                    Print this message: "h", "help"
                     """;
         }
         return """
