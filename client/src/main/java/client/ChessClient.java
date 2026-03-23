@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class ChessClient {
+    private State state = State.SIGNEDOUT;
+
     public void run(){
         System.out.println("♕ Welcome to Chess. Sign in to start.");
         System.out.print(help());
@@ -57,24 +59,37 @@ public class ChessClient {
 
 
     public String login(String... params) throws ResponseException {
-        if(params.length == 2){
-            String username = params[0];
-            String password = params[1];
+        if (!(params.length == 2)) {
+            throw new ResponseException("Username and Password are required");
         }
-     return null;
+        String username = params[0];
+        String password = params[1];
+        state = State.SIGNEDIN;
+
+        //Calling function from service PENDING
+        return "Welcome you are logged in!";
     }
 
     public String register(String... params) throws ResponseException {
+        if (!(params.length == 3)){
+            throw new ResponseException("Username, password and email are required");
+        }
         String username = params[0];
         String password = params[1];
         String email = params[2];
         UserData newUser = new UserData(username,password,email);
-        //result = server.regiter(newUser);
 
-
-        return null;
+        //Calling function from server PENDING
+        service.regiter(newUser);
+        return "Successfully registered.";
     }
     public String quit(String... params) throws ResponseException {
+        if (!(params.length == 1)){
+            throw new ResponseException("Error");
+        }
+        String authToken = params[0];
+        state = State.SIGNEDOUT;
+        //Calling function from service
         return null;
     }
 
