@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.ListOfGamesResult;
 import model.LoginRequest;
 import server.service.ResponseException;
 
@@ -68,13 +69,25 @@ public class ServerFacade {
 
 
 
-    //Functions
-
+    //SIGNEDOUT METHODS
     public AuthData login(LoginRequest userInfo) throws ResponseException {
         var request = buildRequest("POST",	"/session",userInfo);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
+
+//        public AuthData register() throws ResponseException {
+//        var request = buildRequest("POST", "/user",);
+//        var response = sendRequest(request);
+//        return handleResponse(response, AuthData.class);
+//    }
+
+
+
+    //SIGNEDIN METHODS
+//    public ListOfGamesResult listOfGames(){
+//        return null;
+//    }
 
 //    public void logout() throws ResponseException {
 //        var request = buildRequest("POST",	"/session",);
@@ -82,11 +95,6 @@ public class ServerFacade {
 //        return handleResponse(response);
 //    }
 
-//    public AuthData register() throws ResponseException {
-//        var request = buildRequest("POST", "/user",);
-//        var response = sendRequest(request);
-//        return handleResponse(response, AuthData.class);
-//    }
 
 //    public void clear(){
 //        var request = buildRequest("DELETE", "/db");
