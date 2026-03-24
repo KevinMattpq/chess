@@ -1,6 +1,8 @@
 package client;
 
+import model.AuthData;
 import model.LoginRequest;
+import model.UserData;
 import server.ServerFacade;
 import server.service.ResponseException;
 
@@ -9,9 +11,11 @@ import java.util.Scanner;
 
 public class ChessClient {
     private State state = State.SIGNEDOUT;
+    ServerFacade server;
+    AuthData userInfo;
 
     public ChessClient(String serverUrl) throws ResponseException{
-        ServerFacade server = new ServerFacade(serverUrl);
+        server = new ServerFacade(serverUrl);
     }
 
     public void run(){
@@ -24,7 +28,6 @@ public class ChessClient {
         while (!result.equals("quit")){
             printPrompt();
             String line = scanner.nextLine();
-
             //Processing part
             try{
                 //Saving the result of eval
@@ -37,15 +40,13 @@ public class ChessClient {
                 System.out.print(msg);
             }
         }
-
-
     }
 
     public String eval(String input) {
         try {
-            //Converts everythin into lowercase and grabs each value separated by a space
+            //Converts everything into lowercase and grabs each value separated by a space
             String[] tokens = input.toLowerCase().split(" ");
-            //Grabing the command or help
+            //Grabbing the command or help
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             //Getting parameter after the fist word
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -81,10 +82,9 @@ public class ChessClient {
         String username = params[0];
         String password = params[1];
         LoginRequest loginRequest = new LoginRequest(username,password);
-
-        state = State.SIGNEDIN;
         //Calling function from service PENDING
-
+        server.login(loginRequest);
+        state = State.SIGNEDIN;
         return "Logged in successfully";
     }
 
@@ -95,27 +95,22 @@ public class ChessClient {
         String username = params[0];
         String password = params[1];
         String email = params[2];
-        //UserData newUser = new UserData(username,password,email);
-
+        UserData newUser = new UserData(username,password,email);
         //Calling function from server PENDING
-        //serverFacade.regiter(newUser);
+        server.register(newUser);
         return "Successfully registered.";
     }
 
-    public String quit(String... params) throws ResponseException {
-        if (!(params.length == 1)){
-            throw new ResponseException("Error");
-        }
-        String authToken = params[0];
-        state = State.SIGNEDOUT;
-        //Calling function from service
-        return null;
+    public String quit(){
+       System.exit(1);
+       return "Successfully quit";
     }
 
 
     //SIGNEDIN Methods
     public String listOfGames()throws ResponseException{
         assertSignedIn();
+        server.listOfGames();
         return "Here is the list of Games";
     }
 
@@ -125,8 +120,8 @@ public class ChessClient {
             throw new ResponseException("Error");
         }
         String gameName = params[0];
-        //Calling function from server PENDING
-        //PENDING
+        //Calling function from serverFacade
+        server.createGame(gameName);
         //Message that it went through
         return "Game created successfully";
 

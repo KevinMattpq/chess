@@ -1,9 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import model.AuthData;
-import model.ListOfGamesResult;
-import model.LoginRequest;
+import model.*;
 import server.service.ResponseException;
 
 import java.net.URI;
@@ -14,6 +12,8 @@ import java.net.http.HttpResponse;
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
+
+    public AuthData userInfo;
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -76,18 +76,26 @@ public class ServerFacade {
         return handleResponse(response, AuthData.class);
     }
 
-//        public AuthData register() throws ResponseException {
-//        var request = buildRequest("POST", "/user",);
-//        var response = sendRequest(request);
-//        return handleResponse(response, AuthData.class);
-//    }
+    public UserData register(UserData userData) throws ResponseException {
+        var request = buildRequest("POST", "/user",userData);
+        var response = sendRequest(request);
+        return handleResponse(response, UserData.class);
+    }
 
 
 
     //SIGNEDIN METHODS
-//    public ListOfGamesResult listOfGames(){
-//        return null;
-//    }
+    public ListOfGamesResult listOfGames() throws ResponseException {
+        var request = buildRequest("GET","/game",userInfo.authToken());
+        var respose = sendRequest(request);
+        return handleResponse(respose, ListOfGamesResult.class);
+    }
+
+    public CreateGameResult createGame(String gameName) throws ResponseException{
+        var request = buildRequest("POST","/game",gameName);
+        var response = sendRequest(request);
+        return handleResponse(response,CreateGameResult.class);
+    }
 
 //    public void logout() throws ResponseException {
 //        var request = buildRequest("POST",	"/session",);
