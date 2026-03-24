@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.AuthData;
 import server.service.ResponseException;
 
 import java.net.URI;
@@ -48,10 +49,10 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             var body = response.body();
             if (body != null) {
-                throw ResponseException.fromJson(body);
+                throw new ResponseException("Error");
             }
 
-            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            throw new ResponseException("Error Handle");
         }
 
         if (responseClass != null) {
@@ -68,10 +69,26 @@ public class ServerFacade {
 
     //Functions
 
-    public login() throws ResponseException {
-        var request = buildRequest("POST",	"/session",);
+    public AuthData login(AuthData userInfo) throws ResponseException {
+        var request = buildRequest("POST",	"/session",userInfo);
         var response = sendRequest(request);
+        return handleResponse(response, AuthData.class);
     }
+
+//    public void logout() throws ResponseException {
+//        var request = buildRequest("POST",	"/session",);
+//        var response = sendRequest(request);
+//        return handleResponse(response);
+//    }
+
+
+//    public AuthData register() throws ResponseException {
+//        var request = buildRequest("POST", "/user",);
+//        var response = sendRequest(request);
+//        return handleResponse(response, AuthData.class);
+//    }
+
+
 
 
 

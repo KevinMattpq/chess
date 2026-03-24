@@ -1,5 +1,6 @@
 package client;
 
+import model.AuthData;
 import model.UserData;
 import server.Server;
 import server.ServerFacade;
