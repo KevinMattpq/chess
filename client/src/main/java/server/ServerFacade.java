@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.LoginRequest;
 import server.service.ResponseException;
 
 import java.net.URI;
@@ -69,7 +70,7 @@ public class ServerFacade {
 
     //Functions
 
-    public AuthData login(AuthData userInfo) throws ResponseException {
+    public AuthData login(LoginRequest userInfo) throws ResponseException {
         var request = buildRequest("POST",	"/session",userInfo);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);

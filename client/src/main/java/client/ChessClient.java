@@ -1,8 +1,6 @@
 package client;
 
-import model.AuthData;
-import model.UserData;
-import server.Server;
+import model.LoginRequest;
 import server.ServerFacade;
 import server.service.ResponseException;
 
@@ -73,6 +71,8 @@ public class ChessClient {
         }
         String username = params[0];
         String password = params[1];
+        LoginRequest loginRequest = new LoginRequest(username,password);
+
         state = State.SIGNEDIN;
         //Calling function from service PENDING
 
@@ -95,7 +95,7 @@ public class ChessClient {
         String username = params[0];
         String password = params[1];
         String email = params[2];
-        UserData newUser = new UserData(username,password,email);
+        //UserData newUser = new UserData(username,password,email);
 
         //Calling function from server PENDING
         //serverFacade.regiter(newUser);
