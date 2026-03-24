@@ -81,11 +81,16 @@ public class ServerFacade {
 //        return handleResponse(response);
 //    }
 
-
 //    public AuthData register() throws ResponseException {
 //        var request = buildRequest("POST", "/user",);
 //        var response = sendRequest(request);
 //        return handleResponse(response, AuthData.class);
+//    }
+
+//    public void clear(){
+//        var request = buildRequest("DELETE", "/db");
+//        var response = sendRequest(request);
+//        return handleResponse(response);
 //    }
 
 

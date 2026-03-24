@@ -54,6 +54,8 @@ public class ChessClient {
             return switch (cmd) {
                 case "login","l" -> login(params);
                 case "register","r" -> register(params);
+                case "logout" -> logout();
+                case "li", "list" -> listOfGames();
                 case "quit","q" -> quit();
                 case "help","h" -> help();
                 default -> help();
@@ -74,7 +76,16 @@ public class ChessClient {
         state = State.SIGNEDIN;
         //Calling function from service PENDING
 
-        return "Welcome you are logged in!";
+        return "Logged in successfully";
+    }
+    public String logout()throws ResponseException{
+        assertSignedIn();
+        //Call function from serverFacade
+        //PENDING
+        //Updatind the state
+        state = State.SIGNEDOUT;
+        return "Logged out successfully";
+
     }
 
     public String register(String... params) throws ResponseException {
@@ -90,6 +101,27 @@ public class ChessClient {
         //serverFacade.regiter(newUser);
         return "Successfully registered.";
     }
+
+    public String listOfGames()throws ResponseException{
+        assertSignedIn();
+        return null;
+    }
+
+    public String createGame(Integer... params) throws ResponseException {
+        assertSignedIn();
+        if (!(params.length == 1)){
+            throw new ResponseException("Error");
+        }
+        int gameId = params[0];
+        //Calling function from server PENDING
+        //PENDING
+        //Message that it went through
+        return "Game created successfully";
+
+    }
+
+
+
     public String quit(String... params) throws ResponseException {
         if (!(params.length == 1)){
             throw new ResponseException("Error");
@@ -110,6 +142,16 @@ public class ChessClient {
                     Print this message: "h", "help"
                     """;
         }
+        if (state == State.SIGNEDIN){
+            return """
+                    Options:
+                    List current games: "l", "list"
+                    Create new game: "c", "create" <GAME NAME>
+                    Join a game: "j", "join" <GAME ID> <COLOR>
+                    Watch a game: "w", "watch" <GAME ID>
+                    Logout: "logout"
+                    """;
+        }
         return """
                 - list
                 - adopt <pet id>
@@ -123,5 +165,10 @@ public class ChessClient {
     //It will let the user know where to type
     private void printPrompt() {
         System.out.print("\n>>> ");
+    }
+    private void assertSignedIn() throws ResponseException {
+        if (state == State.SIGNEDOUT) {
+            throw new ResponseException("You must sign in");
+        }
     }
 }
