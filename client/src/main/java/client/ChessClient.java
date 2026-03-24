@@ -67,6 +67,7 @@ public class ChessClient {
                         case "j","join" -> joinGame();
                         case "w","watch" -> watchGame();
                         case "quit", "q" -> quit();
+                        case "help", "h" -> help();
                         default -> help();
                     };
             };
