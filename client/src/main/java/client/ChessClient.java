@@ -49,14 +49,26 @@ public class ChessClient {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             //Getting parameter after the fist word
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                case "login","l" -> login(params);
-                case "register","r" -> register(params);
-                case "logout" -> logout();
-                case "li", "list" -> listOfGames();
-                case "quit","q" -> quit();
-                case "help","h" -> help();
-                default -> help();
+            return switch (state) {
+                case SIGNEDOUT ->
+                switch(cmd) {
+                    case "login", "l" -> login(params);
+                    case "register", "r" -> register(params);
+                    case "logout" -> logout();
+                    case "li", "list" -> listOfGames();
+                    case "quit", "q" -> quit();
+                    case "help", "h" -> help();
+                    default -> help();
+                };
+                case SIGNEDIN ->
+                    switch (cmd){
+                        case "l", "list" -> listOfGames();
+                        case "c", "create" -> createGame();
+                        case "j","join" -> joinGame();
+                        case "w","watch" -> watchGame();
+                        case "quit", "q" -> quit();
+                        default -> help();
+                    };
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -104,7 +116,7 @@ public class ChessClient {
 
     public String listOfGames()throws ResponseException{
         assertSignedIn();
-        return null;
+        return "Here is the list of Games";
     }
 
     public String createGame(Integer... params) throws ResponseException {
@@ -120,6 +132,22 @@ public class ChessClient {
 
     }
 
+    public String joinGame(String... params) throws ResponseException{
+        if(!(params.length == 2)){
+            throw new ResponseException("Game Id & Color are required");
+        }
+        String gameID = params[0];
+        String color = params[1];
+        return "Successfully joined game";
+    }
+
+    public String watchGame(String... params) throws ResponseException{
+        if(!(params.length == 1)){
+            throw new ResponseException("Game Id is required");
+        }
+        String gameID = params[0];
+        return "Successfully you are now watching a game";
+    }
 
 
     public String quit(String... params) throws ResponseException {
