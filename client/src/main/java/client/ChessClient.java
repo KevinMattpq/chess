@@ -54,8 +54,6 @@ public class ChessClient {
                 switch(cmd) {
                     case "login", "l" -> login(params);
                     case "register", "r" -> register(params);
-                    case "logout" -> logout();
-                    case "li", "list" -> listOfGames();
                     case "quit", "q" -> quit();
                     case "help", "h" -> help();
                     default -> help();
@@ -63,11 +61,10 @@ public class ChessClient {
                 case SIGNEDIN ->
                     switch (cmd){
                         case "l", "list" -> listOfGames();
-                        case "c", "create" -> createGame();
-                        case "j","join" -> joinGame();
+                        case "c", "create" -> createGame(params);
+                        case "j","join" -> joinGame(params);
                         case "w","watch" -> watchGame();
-                        case "quit", "q" -> quit();
-                        case "help", "h" -> help();
+                        case "logout" -> logout();
                         default -> help();
                     };
             };
@@ -76,8 +73,7 @@ public class ChessClient {
         }
     }
 
-
-
+    //SIGNEDOUT METHODS
     public String login(String... params) throws ResponseException {
         if (!(params.length == 2)) {
             throw new ResponseException("Username and Password are required");
@@ -90,15 +86,6 @@ public class ChessClient {
         //Calling function from service PENDING
 
         return "Logged in successfully";
-    }
-    public String logout()throws ResponseException{
-        assertSignedIn();
-        //Call function from serverFacade
-        //PENDING
-        //Updatind the state
-        state = State.SIGNEDOUT;
-        return "Logged out successfully";
-
     }
 
     public String register(String... params) throws ResponseException {
@@ -115,17 +102,29 @@ public class ChessClient {
         return "Successfully registered.";
     }
 
+    public String quit(String... params) throws ResponseException {
+        if (!(params.length == 1)){
+            throw new ResponseException("Error");
+        }
+        String authToken = params[0];
+        state = State.SIGNEDOUT;
+        //Calling function from service
+        return null;
+    }
+
+
+    //SIGNEDIN Methods
     public String listOfGames()throws ResponseException{
         assertSignedIn();
         return "Here is the list of Games";
     }
 
-    public String createGame(Integer... params) throws ResponseException {
+    public String createGame(String... params) throws ResponseException {
         assertSignedIn();
         if (!(params.length == 1)){
             throw new ResponseException("Error");
         }
-        int gameId = params[0];
+        String gameName = params[0];
         //Calling function from server PENDING
         //PENDING
         //Message that it went through
@@ -150,16 +149,16 @@ public class ChessClient {
         return "Successfully you are now watching a game";
     }
 
-
-    public String quit(String... params) throws ResponseException {
-        if (!(params.length == 1)){
-            throw new ResponseException("Error");
-        }
-        String authToken = params[0];
+    public String logout()throws ResponseException{
+        assertSignedIn();
+        //Call function from serverFacade
+        //PENDING
+        //Updatind the state
         state = State.SIGNEDOUT;
-        //Calling function from service
-        return null;
+        return "Logged out successfully";
+
     }
+
 
     public String help() {
         if (state == State.SIGNEDOUT) {
