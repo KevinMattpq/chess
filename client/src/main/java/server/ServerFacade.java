@@ -19,12 +19,15 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    private HttpRequest buildRequest(String method, String path, Object body,String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        }
+        if (authToken != null){
+            request.setHeader("authorization",authToken);
         }
         return request.build();
     }
@@ -71,13 +74,13 @@ public class ServerFacade {
 
     //SIGNEDOUT METHODS
     public AuthData login(LoginRequest userInfo) throws ResponseException {
-        var request = buildRequest("POST",	"/session",userInfo);
+        var request = buildRequest("POST",	"/session",userInfo,null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
     public UserData register(UserData userData) throws ResponseException {
-        var request = buildRequest("POST", "/user",userData);
+        var request = buildRequest("POST", "/user",userData,null);
         var response = sendRequest(request);
         return handleResponse(response, UserData.class);
     }
@@ -85,14 +88,14 @@ public class ServerFacade {
 
 
     //SIGNEDIN METHODS
-    public ListOfGamesResult listOfGames() throws ResponseException {
-        var request = buildRequest("GET","/game",userInfo.authToken());
-        var respose = sendRequest(request);
-        return handleResponse(respose, ListOfGamesResult.class);
-    }
+//    public ListOfGamesResult listOfGames() throws ResponseException {
+//        var request = buildRequest("GET","/game",userInfo.authToken());
+//        var respose = sendRequest(request);
+//        return handleResponse(respose, ListOfGamesResult.class);
+//    }
 
-    public CreateGameResult createGame(String gameName) throws ResponseException{
-        var request = buildRequest("POST","/game",gameName);
+    public CreateGameResult createGame(GameData gameData,String authToken) throws ResponseException{
+        var request = buildRequest("POST","/game",gameData,authToken);
         var response = sendRequest(request);
         return handleResponse(response,CreateGameResult.class);
     }

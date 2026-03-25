@@ -1,8 +1,6 @@
 package client;
 
-import model.AuthData;
-import model.LoginRequest;
-import model.UserData;
+import model.*;
 import server.ServerFacade;
 import server.service.ResponseException;
 
@@ -83,7 +81,7 @@ public class ChessClient {
         String password = params[1];
         LoginRequest loginRequest = new LoginRequest(username,password);
         //Calling function from service PENDING
-        server.login(loginRequest);
+        userInfo = server.login(loginRequest);
         state = State.SIGNEDIN;
         return "Logged in successfully";
     }
@@ -110,7 +108,7 @@ public class ChessClient {
     //SIGNEDIN Methods
     public String listOfGames()throws ResponseException{
         assertSignedIn();
-        server.listOfGames();
+        //server.listOfGames();
         return "Here is the list of Games";
     }
 
@@ -120,10 +118,12 @@ public class ChessClient {
             throw new ResponseException("Error");
         }
         String gameName = params[0];
+        GameData gameData = new GameData(0,null,null,gameName,null);
         //Calling function from serverFacade
-        server.createGame(gameName);
+        CreateGameResult finalResult = server.createGame(gameData,userInfo.authToken());
         //Message that it went through
-        return "Game created successfully";
+        String gameId = Integer.toString(finalResult.gameID());
+        return gameId;
 
     }
 
