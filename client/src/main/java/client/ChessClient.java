@@ -132,8 +132,10 @@ public class ChessClient {
             throw new ResponseException("Game Id & Color are required");
         }
         String gameID = params[0];
+        Integer gameId = Integer.parseInt(gameID);
         String color = params[1];
-        //server.playGame(color,gameID,userInfo.authToken());
+        JoinRequest joinRequest = new JoinRequest(color,gameId);
+        server.playGame(joinRequest,userInfo.authToken());
         return "Successfully joined game";
     }
 

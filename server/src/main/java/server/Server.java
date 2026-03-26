@@ -147,7 +147,7 @@ public class Server {
     }
 
     public void joinGame(Context ctx) throws ResponseException{
-        JoinGameRequest userData = new Gson().fromJson(ctx.body(),JoinGameRequest.class);
+        JoinRequest userData = new Gson().fromJson(ctx.body(), JoinRequest.class);
         String authToken = ctx.header("authorization");
         try{
             AuthData authData = service.isUserLogin(authToken);

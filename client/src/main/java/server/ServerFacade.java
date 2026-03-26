@@ -100,9 +100,11 @@ public class ServerFacade {
         return handleResponse(response,CreateGameResult.class);
     }
 
-//    public void playGame(String color, String gameId, String authToken){
-//        var request = buildRequest("PUT","/game",color,gameId,authToken);
-//    }
+    public void playGame(JoinRequest userInfo, String authToken) throws ResponseException {
+        var request = buildRequest("PUT","/game",userInfo,authToken);
+        var response = sendRequest(request);
+        handleResponse(response,null);
+    }
 
 //    public void logout(String authToken) throws ResponseException {
 //        var request = buildRequest("POST",	"/session",null,authToken);

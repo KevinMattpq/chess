@@ -4,10 +4,8 @@ import dataaccess.*;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class Service {
     DAOUsersInterface dataUsers;
@@ -120,7 +118,7 @@ public class Service {
     }
 
 
-    public JoinGameRequest joinGame(JoinGameRequest userData, String username) throws  ResponseException {
+    public JoinRequest joinGame(JoinRequest userData, String username) throws  ResponseException {
        try{
            List<String> colors = Arrays.asList("WHITE", "BLACK");
 
@@ -144,7 +142,7 @@ public class Service {
            } else {
                dataGames.updateGame(new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
            }
-           JoinGameRequest newJoinGame = new JoinGameRequest(userData.playerColor(), userData.gameID());
+           JoinRequest newJoinGame = new JoinRequest(userData.playerColor(), userData.gameID());
            return newJoinGame;
        } catch (DataAccessException e){
            throw new ResponseException("Error: Database Error");
