@@ -135,7 +135,7 @@ public class ChessClient {
         Integer gameId = Integer.parseInt(gameID);
         String color = params[1];
         JoinRequest joinRequest = new JoinRequest(color,gameId);
-        server.playGame(joinRequest,userInfo.authToken());
+        server.joinGame(joinRequest,userInfo.authToken());
         return "Successfully joined game";
     }
 
@@ -150,7 +150,7 @@ public class ChessClient {
     public String logout()throws ResponseException{
         assertSignedIn();
         //Call function from serverFacade
-        //server.logout(userInfo.authToken());
+        server.logout(userInfo.authToken());
         //Updatind the state
         state = State.SIGNEDOUT;
         return "Logged out successfully";

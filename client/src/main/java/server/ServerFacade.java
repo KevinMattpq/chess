@@ -100,17 +100,17 @@ public class ServerFacade {
         return handleResponse(response,CreateGameResult.class);
     }
 
-    public void playGame(JoinRequest userInfo, String authToken) throws ResponseException {
+    public void joinGame(JoinRequest userInfo, String authToken) throws ResponseException {
         var request = buildRequest("PUT","/game",userInfo,authToken);
         var response = sendRequest(request);
         handleResponse(response,null);
     }
 
-//    public void logout(String authToken) throws ResponseException {
-//        var request = buildRequest("POST",	"/session",null,authToken);
-//        var response = sendRequest(request);
-//        return handleResponse(response,);
-//    }
+    public void logout(String authToken) throws ResponseException {
+        var request = buildRequest("DELETE",	"/session",null,authToken);
+        var response = sendRequest(request);
+        handleResponse(response,null);
+    }
 
 
 //    public void clear(){
