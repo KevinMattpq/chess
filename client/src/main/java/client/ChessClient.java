@@ -108,8 +108,8 @@ public class ChessClient {
     //SIGNEDIN Methods
     public String listOfGames()throws ResponseException{
         assertSignedIn();
-        //server.listOfGames();
-        return "Here is the list of Games";
+        ListOfGamesResult result = server.listOfGames(userInfo.authToken());
+        return result.toString();
     }
 
     public String createGame(String... params) throws ResponseException {
@@ -121,7 +121,7 @@ public class ChessClient {
         GameData gameData = new GameData(0,null,null,gameName,null);
         //Calling function from serverFacade
         CreateGameResult finalResult = server.createGame(gameData,userInfo.authToken());
-        //Message that it went through
+        //Returning GameID as String
         String gameId = Integer.toString(finalResult.gameID());
         return gameId;
 

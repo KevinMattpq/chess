@@ -88,11 +88,11 @@ public class ServerFacade {
 
 
     //SIGNEDIN METHODS
-//    public ListOfGamesResult listOfGames() throws ResponseException {
-//        var request = buildRequest("GET","/game",userInfo.authToken());
-//        var respose = sendRequest(request);
-//        return handleResponse(respose, ListOfGamesResult.class);
-//    }
+    public ListOfGamesResult listOfGames(String authToken) throws ResponseException {
+        var request = buildRequest("GET","/game",null,authToken);
+        var respose = sendRequest(request);
+        return handleResponse(respose, ListOfGamesResult.class);
+    }
 
     public CreateGameResult createGame(GameData gameData,String authToken) throws ResponseException{
         var request = buildRequest("POST","/game",gameData,authToken);
