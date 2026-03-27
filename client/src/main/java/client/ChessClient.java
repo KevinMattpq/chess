@@ -11,6 +11,7 @@ public class ChessClient {
     private State state = State.SIGNEDOUT;
     ServerFacade server;
     AuthData userInfo;
+    ListOfGamesResult gameslist;
 
     public ChessClient(String serverUrl) throws ResponseException{
         server = new ServerFacade(serverUrl);
@@ -62,7 +63,7 @@ public class ChessClient {
                         case "l", "list" -> listOfGames();
                         case "c", "create" -> createGame(params);
                         case "j","join" -> joinGame(params);
-                        case "w","watch" -> watchGame();
+                        case "w","watch" -> watchGame(params);
                         case "logout" -> logout();
                         default -> help();
                     };
@@ -109,7 +110,16 @@ public class ChessClient {
     public String listOfGames()throws ResponseException{
         assertSignedIn();
         ListOfGamesResult result = server.listOfGames(userInfo.authToken());
-        return result.toString();
+        gameslist = result;
+        StringBuilder listOfGames = new StringBuilder();
+        for(GameData game: gameslist.games()){
+            listOfGames.append("Game Id: " + game.gameID()+ "\n");
+            listOfGames.append("White Username: "+ game.whiteUsername()+ "\n");
+            listOfGames.append("Black Usename: "+game.blackUsername()+ "\n");
+            listOfGames.append("Game Name: "+game.gameName()+ "\n");
+            listOfGames.append("Game: "+game.game()+ "\n\n");
+        }
+        return listOfGames.toString();
     }
 
     public String createGame(String... params) throws ResponseException {
@@ -133,7 +143,7 @@ public class ChessClient {
         }
         String gameID = params[0];
         Integer gameId = Integer.parseInt(gameID);
-        String color = params[1];
+        String color = params[1].toUpperCase();
         JoinRequest joinRequest = new JoinRequest(color,gameId);
         server.joinGame(joinRequest,userInfo.authToken());
         return "Successfully joined game";
@@ -143,8 +153,16 @@ public class ChessClient {
         if(!(params.length == 1)){
             throw new ResponseException("Game Id is required");
         }
-        String gameID = params[0];
-        return "Successfully you are now watching a game";
+        if(gameslist != null){
+            String gameID = params[0];
+            int userId = Integer.parseInt(gameID);
+            for (GameData game: gameslist.games()){
+                if (game.gameID() == userId){
+                    return "Successfully you are now watching a game";
+                }
+            }
+        }
+        return "You must list the games OR create Games first";
     }
 
     public String logout()throws ResponseException{
@@ -179,12 +197,7 @@ public class ChessClient {
                     """;
         }
         return """
-                - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
-                - adoptAll
-                - signOut
-                - quit
+                - Pending
                 """;
     }
 

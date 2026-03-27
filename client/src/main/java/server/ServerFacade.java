@@ -23,10 +23,13 @@ public class ServerFacade {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
+//        if (body != null && authToken != null){
+//            request.setHeader("authorization", authToken);
+//        }
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
-        if (authToken != null){
+        if (authToken!= null){
             request.setHeader("authorization",authToken);
         }
         return request.build();
@@ -111,16 +114,5 @@ public class ServerFacade {
         var response = sendRequest(request);
         handleResponse(response,null);
     }
-
-
-//    public void clear(){
-//        var request = buildRequest("DELETE", "/db");
-//        var response = sendRequest(request);
-//        return handleResponse(response);
-//    }
-
-
-
-
 
 }
