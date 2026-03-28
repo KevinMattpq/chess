@@ -120,4 +120,15 @@ public class ServerFacadeTests {
         JoinRequest request = new JoinRequest("White",resultId.gameID());
         Assertions.assertDoesNotThrow(()-> sFTest.joinGame(request, userInfo.authToken()));
     }
+    @Test
+    public void joinGameTestFail()throws ResponseException{
+        sFTest.clear();
+        UserData request = sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
+        //Login
+        AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
+        //Logout
+        sFTest.logout(userInfo.authToken());
+        JoinRequest joinRequest = new JoinRequest("white",1);
+        Assertions.assertThrows(ResponseException.class,() ->sFTest.joinGame(joinRequest, userInfo.authToken()));
+    }
 }
