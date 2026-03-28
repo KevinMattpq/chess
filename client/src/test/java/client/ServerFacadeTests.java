@@ -1,7 +1,6 @@
 package client;
 
-import model.LoginRequest;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
@@ -49,7 +48,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public  void loginTest() throws ResponseException {
+    public void loginTest() throws ResponseException {
         sFTest.clear();
         sFTest.register(new UserData("kevin","kevin1", "kevin@byu.edu"));
         LoginRequest request = new LoginRequest("kevin","kevin1");
@@ -57,11 +56,68 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public  void loginTestFail()throws ResponseException{
+    public void loginTestFail() throws ResponseException{
         sFTest.clear();
         sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
         LoginRequest request = new LoginRequest("kevin","kevin2");
         Assertions.assertThrows(ResponseException.class,() -> sFTest.login(request));
 
+    }
+
+    @Test
+    public void createGameTest() throws ResponseException{
+        sFTest.clear();
+        sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
+        AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
+        GameData gameData = new GameData(0,null,null,"FirstGame",null);
+        Assertions.assertDoesNotThrow(()-> sFTest.createGame(gameData, userInfo.authToken()));
+    }
+
+    @Test
+    public void createGameTestFail() throws ResponseException{
+        sFTest.clear();
+        sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
+        AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
+        GameData gameData = new GameData(0,null,null,null,null);
+        Assertions.assertThrows(ResponseException.class,()-> sFTest.createGame(gameData, userInfo.authToken()));
+    }
+
+    @Test
+    public void logoutTest()throws ResponseException{
+        sFTest.clear();
+        sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
+        AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
+        Assertions.assertDoesNotThrow(() -> sFTest.logout(userInfo.authToken()));
+    }
+
+    @Test
+    public void logoutTestFail()throws ResponseException{
+        sFTest.clear();
+        sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
+        AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
+        sFTest.logout(userInfo.authToken());
+        //Throwing an error once the user is logged out
+        Assertions.assertThrows(ResponseException.class, ()-> sFTest.logout(userInfo.authToken()));
+    }
+
+    @Test
+    public void joinGameTest() throws ResponseException{
+        sFTest.clear();
+        //Creating a user
+        sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
+        //Login
+        AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
+        //Creating a gameData to create a new game
+        GameData firstGame = new GameData(0,null,null,"1stGame",null);
+        GameData secondGame = new GameData(0,null,null,"2ndGame",null);
+
+        //Creating the actual game
+        CreateGameResult resultId = sFTest.createGame(firstGame, userInfo.authToken());
+        sFTest.createGame(secondGame, userInfo.authToken());
+        //listing Games
+        ListOfGamesResult result = sFTest.listOfGames(userInfo.authToken());
+        //Creating the JoinRequest - Needs Color and GameId
+        JoinRequest request = new JoinRequest("White",resultId.gameID());
+        Assertions.assertDoesNotThrow(()-> sFTest.joinGame(request, userInfo.authToken()));
     }
 }
