@@ -131,4 +131,11 @@ public class ServerFacadeTests {
         JoinRequest joinRequest = new JoinRequest("white",1);
         Assertions.assertThrows(ResponseException.class,() ->sFTest.joinGame(joinRequest, userInfo.authToken()));
     }
+
+    @Test
+    public void clearTest() throws ResponseException {
+        sFTest.clear();
+        sFTest.register(new UserData("Kevin","kevin1","kevin@byu.edu"));
+        Assertions.assertDoesNotThrow(() -> sFTest.clear());
+    }
 }
