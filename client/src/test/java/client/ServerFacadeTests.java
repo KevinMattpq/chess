@@ -117,7 +117,7 @@ public class ServerFacadeTests {
         //listing Games
         ListOfGamesResult result = sFTest.listOfGames(userInfo.authToken());
         //Creating the JoinRequest - Needs Color and GameId
-        JoinRequest request = new JoinRequest("White",resultId.gameID());
+        JoinRequest request = new JoinRequest("WHITE",resultId.gameID());
         Assertions.assertDoesNotThrow(()-> sFTest.joinGame(request, userInfo.authToken()));
     }
     @Test
@@ -128,7 +128,7 @@ public class ServerFacadeTests {
         AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
         //Logout
         sFTest.logout(userInfo.authToken());
-        JoinRequest joinRequest = new JoinRequest("white",1);
+        JoinRequest joinRequest = new JoinRequest("WHITE",1);
         Assertions.assertThrows(ResponseException.class,() ->sFTest.joinGame(joinRequest, userInfo.authToken()));
     }
 
