@@ -103,7 +103,8 @@ public class ChessClient {
         String email = params[2];
         UserData newUser = new UserData(username,password,email);
         //Calling function from server PENDING
-        server.register(newUser);
+        userInfo = server.register(newUser);
+        state = State.SIGNEDIN;
         return "Successfully registered.";
     }
 
@@ -123,8 +124,7 @@ public class ChessClient {
             listOfGames.append("Game Id: " + game.gameID()+ "\n");
             listOfGames.append("White Username: "+ game.whiteUsername()+ "\n");
             listOfGames.append("Black Usename: "+game.blackUsername()+ "\n");
-            listOfGames.append("Game Name: "+game.gameName()+ "\n");
-            listOfGames.append("Game: "+game.game()+ "\n\n");
+            listOfGames.append("Game Name: "+game.gameName()+ "\n\n");
         }
         return listOfGames.toString();
     }
@@ -149,12 +149,16 @@ public class ChessClient {
             throw new ResponseException("Game Id & Color are required");
         }
         String gameID = params[0];
-        Integer gameId = Integer.parseInt(gameID);
-        String color = params[1].toUpperCase();
-        ChessGame.TeamColor uColor = color.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-        JoinRequest joinRequest = new JoinRequest(color,gameId);
-        server.joinGame(joinRequest,userInfo.authToken());
-        System.out.println(boardPrinter.draw(board,uColor));
+        try{
+            Integer gameId = Integer.parseInt(gameID);
+            String color = params[1].toUpperCase();
+            ChessGame.TeamColor uColor = color.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            JoinRequest joinRequest = new JoinRequest(color,gameId);
+            server.joinGame(joinRequest,userInfo.authToken());
+            System.out.println(boardPrinter.draw(board,uColor));
+        }catch (NumberFormatException e){
+            throw new ResponseException("Make sure to input a number for Game ID");
+        }
         return "Successfully joined game";
     }
 
@@ -162,15 +166,21 @@ public class ChessClient {
         if(!(params.length == 1)){
             throw new ResponseException("Game Id is required");
         }
-        if(gameslist != null){
-            String gameID = params[0];
-            int userId = Integer.parseInt(gameID);
-            for (GameData game: gameslist.games()){
-                if (game.gameID() == userId){
-                    return "Successfully you are now watching a game";
+        try{
+            if(gameslist != null){
+                String gameID = params[0];
+                int userId = Integer.parseInt(gameID);
+                for (GameData game: gameslist.games()){
+                    if (game.gameID() == userId){
+                        System.out.println(boardPrinter.draw(board, ChessGame.TeamColor.WHITE));
+                        return "Successfully you are now watching a game";
+                    }
                 }
             }
+        }catch (NumberFormatException e){
+            throw new ResponseException("Make sure to input a Number for Game Id");
         }
+
         return "You must list the games OR create Games first";
     }
 

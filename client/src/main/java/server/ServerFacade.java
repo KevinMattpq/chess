@@ -82,10 +82,10 @@ public class ServerFacade {
         return handleResponse(response, AuthData.class);
     }
 
-    public UserData register(UserData userData) throws ResponseException {
+    public AuthData register(UserData userData) throws ResponseException {
         var request = buildRequest("POST", "/user",userData,null);
         var response = sendRequest(request);
-        return handleResponse(response, UserData.class);
+        return handleResponse(response, AuthData.class);
     }
 
 

@@ -51,7 +51,7 @@ public class BoardPrinter {
             for(int col = 1;col < 9; col++){
                 ChessPosition position = new ChessPosition(rowNumUser,col);
                 ChessPiece piece = board.getPiece(position);
-                if ((rowNumUser + col) % 2 == 0){
+                if ((rowNumUser + col) % 2 != 0){
                     if(piece == null ){
                         row.append(EscapeSequences.SET_BG_COLOR_WHITE).append("   ");
                     }else{
@@ -79,7 +79,7 @@ public class BoardPrinter {
             for(int col = 8;col > 0; col--){
                 ChessPosition position = new ChessPosition(rowNumUser,col);
                 ChessPiece piece = board.getPiece(position);
-                if ((rowNumUser + col) % 2 == 0){
+                if ((rowNumUser + col) % 2 != 0){
                     if(piece == null ){
                         row.append(EscapeSequences.SET_BG_COLOR_WHITE).append("   ");
                     }else{
