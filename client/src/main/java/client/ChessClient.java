@@ -1,5 +1,7 @@
 package client;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import model.*;
 import server.ServerFacade;
 import server.service.ResponseException;
@@ -11,10 +13,14 @@ public class ChessClient {
     private State state = State.SIGNEDOUT;
     ServerFacade server;
     AuthData userInfo;
+    ChessBoard board = new ChessBoard();
+    BoardPrinter boardPrinter = new BoardPrinter();
     ListOfGamesResult gameslist;
+
 
     public ChessClient(String serverUrl) throws ResponseException{
         server = new ServerFacade(serverUrl);
+        board.resetBoard();
     }
 
     public void run(){
@@ -64,6 +70,7 @@ public class ChessClient {
                         case "c", "create" -> createGame(params);
                         case "j","join" -> joinGame(params);
                         case "w","watch" -> watchGame(params);
+                        case "g", "show board" -> printBoard();
                         case "logout" -> logout();
                         default -> help();
                     };
@@ -144,8 +151,10 @@ public class ChessClient {
         String gameID = params[0];
         Integer gameId = Integer.parseInt(gameID);
         String color = params[1].toUpperCase();
+        ChessGame.TeamColor uColor = color.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
         JoinRequest joinRequest = new JoinRequest(color,gameId);
         server.joinGame(joinRequest,userInfo.authToken());
+        System.out.println(boardPrinter.draw(board,uColor));
         return "Successfully joined game";
     }
 
@@ -174,6 +183,13 @@ public class ChessClient {
         return "Logged out successfully";
 
     }
+
+    public String printBoard(){
+      ChessBoard board = new ChessBoard();
+      board.resetBoard();
+      String result = boardPrinter.draw(board,ChessGame.TeamColor.WHITE);
+      return result;
+    };
 
 
     public String help() {
