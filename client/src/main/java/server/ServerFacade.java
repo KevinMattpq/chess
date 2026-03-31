@@ -13,8 +13,6 @@ public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
-    public AuthData userInfo;
-
     public ServerFacade(String url) {
         serverUrl = url;
     }
@@ -23,9 +21,6 @@ public class ServerFacade {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
-//        if (body != null && authToken != null){
-//            request.setHeader("authorization", authToken);
-//        }
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
