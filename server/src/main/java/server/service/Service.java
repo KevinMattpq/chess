@@ -123,7 +123,8 @@ public class Service {
        try{
            List<String> colors = Arrays.asList("WHITE", "BLACK");
 
-           if (userData.playerColor() == null || !colors.contains(userData.playerColor()) || userData.gameID() == 0 ) {
+           if (userData.playerColor() == null || !colors.contains(userData.playerColor())||userData.gameID() == null
+                   || userData.gameID() == 0 ) {
                throw new ResponseException("Error: Bad Request");
            }
 
