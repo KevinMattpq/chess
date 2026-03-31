@@ -1,7 +1,7 @@
 package client;
 
 import chess.*;
-import server.service.ResponseException;
+import networking.ResponseException;
 
 public class ClientMain {
     public static void main(String[] args) throws ResponseException {

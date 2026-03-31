@@ -2,7 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import model.*;
-import server.service.ResponseException;
+import networking.ResponseException;
 
 import java.net.URI;
 import java.net.http.HttpClient;

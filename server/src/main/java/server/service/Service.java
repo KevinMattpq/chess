@@ -2,6 +2,7 @@ package server.service;
 
 import dataaccess.*;
 import model.*;
+import networking.ResponseException;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Arrays;
@@ -23,7 +24,7 @@ public class Service {
 
 
 
-    public  void clearAll() throws ResponseException{
+    public  void clearAll() throws ResponseException {
        try{
            dataGames.clearGames();
            dataUsers.deleteAllUsers();

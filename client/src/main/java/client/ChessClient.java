@@ -4,7 +4,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import model.*;
 import server.ServerFacade;
-import server.service.ResponseException;
+import networking.ResponseException;
 
 import java.util.Arrays;
 import java.util.Scanner;
