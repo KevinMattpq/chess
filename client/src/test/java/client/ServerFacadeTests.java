@@ -123,7 +123,7 @@ public class ServerFacadeTests {
     @Test
     public void joinGameTestFail()throws ResponseException{
         sFTest.clear();
-        UserData request = sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
+        AuthData request = sFTest.register(new UserData("kevin","kevin1","kevin@byu.edu"));
         //Login
         AuthData userInfo = sFTest.login(new LoginRequest("kevin","kevin1"));
         //Logout
