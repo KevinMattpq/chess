@@ -45,7 +45,6 @@ public class BoardPrinter {
         row.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY).append(" "+ rowNum +" ");
         row.append(EscapeSequences.RESET_BG_COLOR);
 
-
         //Checking the color to determine the orientation
         if(color == ChessGame.TeamColor.WHITE){
             for(int col = 1;col < 9; col++){
@@ -156,7 +155,3 @@ public class BoardPrinter {
         return resultHeader+"\n"+rowResult.toString()+resultHeader;
     }
 }
-
-
-
-
