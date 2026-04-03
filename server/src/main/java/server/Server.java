@@ -6,11 +6,13 @@ import io.javalin.http.Context;
 import model.*;
 import networking.ResponseException;
 import server.service.Service;
+import server.websocket.WebsocketHandler;
 
 public class Server {
 
     private final Javalin javalin;
     private final Service service = new Service();
+    private final WebsocketHandler webSocketHandler = new WebsocketHandler();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -23,6 +25,11 @@ public class Server {
         javalin.get("/game", this::listOfGames);
         javalin.post("/game",this::createGame);
         javalin.put("/game",this::joinGame);
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
     }
 
     public int run(int desiredPort) {

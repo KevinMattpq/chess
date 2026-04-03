@@ -74,6 +74,12 @@ public class ChessClient {
                         case "logout" -> logout();
                         default -> help();
                     };
+                case GAMEPLAY ->
+                    switch (cmd){
+                        case "h","help" -> help();
+                        case "l","leave" -> leave();
+                        default -> help();
+                    };
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -159,6 +165,7 @@ public class ChessClient {
         }catch (NumberFormatException e){
             throw new ResponseException("Make sure to input a number for Game ID");
         }
+            state = State.GAMEPLAY;
         return "Successfully joined game";
     }
 
@@ -202,6 +209,14 @@ public class ChessClient {
     };
 
 
+    //INGAME
+
+    public String leave(){
+        state = State.SIGNEDIN;
+        return "Back to home";
+    }
+
+
     public String help() {
         if (state == State.SIGNEDOUT) {
             return """
@@ -220,6 +235,18 @@ public class ChessClient {
                     Join a game: "j", "join" <GAME ID> <COLOR>
                     Watch a game: "w", "watch" <GAME ID>
                     Logout: "logout"
+                    """;
+        }
+
+        if(state == State.GAMEPLAY){
+            return """
+                    Options:
+                    Help: "h", "help"
+                    Redraw Chess board: "rb", "redraw"
+                    Leave: "l", "leave"
+                    Make move: "mk"
+                    Resign: "r", "resign"
+                    Legal move: "lm"
                     """;
         }
         return """
