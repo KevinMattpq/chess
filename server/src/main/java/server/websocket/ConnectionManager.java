@@ -1,6 +1,7 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -9,14 +10,24 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<Integer, Map<String, Session>> connections = new ConcurrentHashMap<>();
+    public class Connection{
+        private String username;
+        private Session session;
+
+        public Connection(String username, Session session) {
+            this.username = username;
+            this.session = session;
+        }
+    }
+
+    public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
 
     public HashMap<String,Session> userInfo = new HashMap();
 
     public void add(Integer gameId, String username, Session session) {
         if(!connections.containsKey(gameId)){
-            userInfo.put(username,session);
-            connections.put(gameId,userInfo);
+            Connection connection = new Connection(username,session);
+            connections.put(gameId,connection);
         }
 
     }
@@ -25,12 +36,12 @@ public class ConnectionManager {
         connections.remove(session);
     }
 
-    public void broadcast(Session excludeSession, Notification notification) throws IOException {
+    public void broadcast(Session excludeSession, ServerMessage notification) throws IOException {
         String msg = notification.toString();
-        for (Session c : connections.values()) {
-            if (c.isOpen()) {
+        for (Connection c : connections.values()) {
+            if (c.session.isOpen()) {
                 if (!c.equals(excludeSession)) {
-                    c.getRemote().sendString(msg);
+                    c.session.getRemote().sendString(msg);
                 }
             }
         }
