@@ -1,5 +1,6 @@
 package server.websocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -13,21 +14,23 @@ public class ConnectionManager {
     public static class Connection{
         private String username;
         private Session session;
+        private int gameId;
 
-        public Connection(String username, Session session) {
+        public Connection(Integer gameId,String username, Session session) {
             this.username = username;
             this.session = session;
+            this.gameId = gameId;
         }
     }
 
-    public final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Connection, Integer> connections = new ConcurrentHashMap<>();
 
     public HashMap<String,Session> userInfo = new HashMap();
 
     public void add(Integer gameId, String username, Session session) {
         if(!connections.containsKey(gameId)){
-            Connection connection = new Connection(username,session);
-            connections.put(gameId,connection);
+            Connection connection = new Connection(gameId,username,session);
+            connections.put(connection,gameId);
         }
 
     }
@@ -36,14 +39,20 @@ public class ConnectionManager {
         connections.remove(session);
     }
 
-    public void broadcast(Session excludeSession, ServerMessage notification) throws IOException {
-        String msg = notification.toString();
-        for (Connection c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.equals(excludeSession)) {
-                    c.session.getRemote().sendString(msg);
+    public void broadcast(Integer gameId,Session excludeSession, ServerMessage notification) throws IOException {
+        String msg = new Gson().toJson(notification);
+        for (Connection c : connections.keySet()) {
+            System.out.println(c.gameId);
+            System.out.println(c.username);
+            System.out.println(c.session);
+            if (c.gameId == gameId){
+                if (c.session.isOpen()) {
+                    if (!c.session.equals(excludeSession)) {
+                        c.session.getRemote().sendString(msg);
+                    }
                 }
             }
+
         }
     }
 }

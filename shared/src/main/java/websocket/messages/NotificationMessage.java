@@ -5,6 +5,6 @@ public class NotificationMessage extends ServerMessage{
 
     public NotificationMessage(String message) {
         super(ServerMessageType.NOTIFICATION);
-        this.message = "Error: " + message;
+        this.message = message;
     }
 }
