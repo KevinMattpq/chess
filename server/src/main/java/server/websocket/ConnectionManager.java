@@ -36,15 +36,16 @@ public class ConnectionManager {
     }
 
     public void remove(Session session) {
-        connections.remove(session);
+        for (Connection c : connections.keySet()){
+            if(c.session.equals(session)){
+                connections.remove(c);
+            }
+        }
     }
 
     public void broadcast(Integer gameId,Session excludeSession, ServerMessage notification) throws IOException {
         String msg = new Gson().toJson(notification);
         for (Connection c : connections.keySet()) {
-            System.out.println(c.gameId);
-            System.out.println(c.username);
-            System.out.println(c.session);
             if (c.gameId == gameId){
                 if (c.session.isOpen()) {
                     if (!c.session.equals(excludeSession)) {

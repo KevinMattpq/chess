@@ -10,6 +10,7 @@ import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
 import model.AuthData;
 import model.GameData;
+import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
@@ -29,6 +30,8 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         UserGameCommand userCommand = new Gson().fromJson(ctx.message(), UserGameCommand.class);
         switch (userCommand.getCommandType()){
             case CONNECT -> connect(userCommand, ctx.session);
+            case LEAVE -> leave(userCommand, ctx.session);
+            case MAKE_MOVE -> makeMove();
         }
     }
     @Override
@@ -88,5 +91,26 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     }
 
+    public void leave(UserGameCommand userInfo, Session session) throws DataAccessException, IOException {
+        String authToken = userInfo.getAuthToken();
+        DAOAuthDataInterface daoAuth = new MySQLAuthData();
+        AuthData info = daoAuth.readAuthToken(authToken);
+        if (info == null){
+            ErrorMessage msg = new ErrorMessage("Error: Auth token is null");
+            String errorMsg = new Gson().toJson(msg);
+            session.getRemote().sendString(errorMsg);
+        }
+        String username = info.username();
+        int gameId = userInfo.getGameID();
+        //Removing connection
+        conections.remove(session);
+        //Sending Notification
+        String msg = username + " left the session";
+        NotificationMessage notificationMessage = new NotificationMessage(msg);
+        conections.broadcast(gameId,session,notificationMessage);
+    }
 
+    public void makeMove(UserGameCommand userInfo, Session session){
+
+    }
 }
