@@ -162,10 +162,6 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void makeMove(MakeMoveCommand userInfo, Session session) throws IOException, DataAccessException, InvalidMoveException {
-        DAOAuthDataInterface daoA = new MySQLAuthData();
-        AuthData userInformation = daoA.readAuthToken(userInfo.getAuthToken());
-        String username = userInformation.username();
-
         //Validatin Auth Token
         if(!authTokenValidation(userInfo)){
             errorMessage(session,"Invalid Auth token");
@@ -177,28 +173,53 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         //Game validation
         if(!gameValidation(userInfo)){
             errorMessage(session,"Game is over");
+            return;
+
         }
         //Turn Validation
         if(!turnValidation(userInfo)){
             errorMessage(session,"Incorrect Turn");
+            return;
         }
+
+        DAOAuthDataInterface daoA = new MySQLAuthData();
+        AuthData userInformation = daoA.readAuthToken(userInfo.getAuthToken());
+        String username = userInformation.username();
 
         //Chess Logic
         ChessMove move = userInfo.getMove();
         //Game from data Base
         DAOGamesInterface daoGame = new MySQLGames();
-        GameData game = daoGame.readGame(userInfo.getGameID());
+        GameData gameData = daoGame.readGame(userInfo.getGameID());
+        ChessGame game = gameData.game();
 
         try{
-            game.game().makeMove(move);
+            game.makeMove(move);
         }catch (InvalidMoveException e){
             errorMessage(session,"Invalid Move");
+            return;
         }
+        //Updating game
+        daoGame.updateGame(gameData);
 
         //Sending Notification
-        String msg = username + " resigned";
+        String msg = username + " Move";
         NotificationMessage notificationMessage = new NotificationMessage(msg);
-        conections.broadcast(userInfo.getGameID(), null,notificationMessage);
+        conections.broadcast(userInfo.getGameID(), session,notificationMessage);
+
+        //Sending Load Game
+        LoadMessage newGame = new LoadMessage(game);
+        conections.broadcast(userInfo.getGameID(), null,newGame);
+
+        //Check Mate
+        if(game.isInCheckmate(game.getTeamTurn())){
+            game.gameState = true;
+            daoGame.updateGame(gameData);
+            //Sending Notification
+            String msg2 = "Game Over";
+            NotificationMessage notificationMessage2 = new NotificationMessage(msg);
+            conections.broadcast(userInfo.getGameID(), null,notificationMessage2);
+        }
     }
 
     //Helper functions
