@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ChessGame {
     private ChessBoard board;
     private TeamColor teamTurn;
+    public boolean gameState = false;
 
     public ChessGame() {
         this.board = new ChessBoard();
@@ -219,6 +220,10 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         return !isInCheck(teamColor) && hasNoValidMoves(teamColor);
+    }
+
+    public boolean isGameOver(){
+        return gameState;
     }
 
     //

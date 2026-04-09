@@ -1,5 +1,7 @@
 package server.websocket;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.websocket.WsCloseContext;
@@ -10,8 +12,11 @@ import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
 import model.AuthData;
 import model.GameData;
+import model.JoinRequest;
+import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadMessage;
@@ -28,10 +33,12 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage( WsMessageContext ctx) throws Exception {
         //Handle each of the Four command the clients can send
         UserGameCommand userCommand = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+        MakeMoveCommand makeMoveCommand = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
         switch (userCommand.getCommandType()){
             case CONNECT -> connect(userCommand, ctx.session);
             case LEAVE -> leave(userCommand, ctx.session);
-            case MAKE_MOVE -> makeMove();
+            case MAKE_MOVE -> makeMove(makeMoveCommand, ctx.session);
+            case RESIGN -> resign(userCommand,ctx.session);
         }
     }
     @Override
@@ -96,12 +103,24 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         DAOAuthDataInterface daoAuth = new MySQLAuthData();
         AuthData info = daoAuth.readAuthToken(authToken);
         if (info == null){
-            ErrorMessage msg = new ErrorMessage("Error: Auth token is null");
-            String errorMsg = new Gson().toJson(msg);
-            session.getRemote().sendString(errorMsg);
+            errorMessage(session,"Error: Auth token is null");
         }
+        assert info != null;
         String username = info.username();
         int gameId = userInfo.getGameID();
+
+        DAOGamesInterface daoGame = new MySQLGames();
+        GameData game = daoGame.readGame(userInfo.getGameID());
+
+        if (Objects.equals(game.whiteUsername(), username) || Objects.equals(game.blackUsername(), username)){
+            if(Objects.equals(game.whiteUsername(), username)){
+                game = new GameData(userInfo.getGameID(), null, game.blackUsername(), game.gameName(), game.game());
+                daoGame.updateGame(game);
+            }else{
+                game = new GameData(userInfo.getGameID(), game.whiteUsername(), null, game.gameName(), game.game());
+                daoGame.updateGame(game);
+            }
+        }
         //Removing connection
         conections.remove(session);
         //Sending Notification
@@ -110,7 +129,135 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         conections.broadcast(gameId,session,notificationMessage);
     }
 
-    public void makeMove(UserGameCommand userInfo, Session session){
+    public void resign(UserGameCommand userInfo, Session session) throws IOException, DataAccessException {
+        String authToken = userInfo.getAuthToken();
+        DAOAuthDataInterface dao = new MySQLAuthData();
+        AuthData info = dao.readAuthToken(authToken);
+        if (info == null){
+            errorMessage(session,"Information is null");
+        }
+        //User Validation
+        DAOGamesInterface daoGame = new MySQLGames();
+        GameData game = daoGame.readGame(userInfo.getGameID());
+        int gameId = game.gameID();
+        String username = info.username();
+        if(!Objects.equals(game.whiteUsername(), username) && !Objects.equals(game.blackUsername(), username)){
+            errorMessage(session,"Not a player (WHITE OR BLACK)");
+            return;
+        }
+        //Game
+        if(game.game().isGameOver()){
+            errorMessage(session,"Game is over");
+            return;
+        }
+        game.game().gameState = true;
+        //Updating Game
+       GameData newGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
+       daoGame.updateGame(newGame);
+       //Sending Notification
+        String msg = username + " resigned";
+        NotificationMessage notificationMessage = new NotificationMessage(msg);
+        conections.broadcast(gameId,null,notificationMessage);
 
     }
+
+    public void makeMove(MakeMoveCommand userInfo, Session session) throws IOException, DataAccessException, InvalidMoveException {
+        DAOAuthDataInterface daoA = new MySQLAuthData();
+        AuthData userInformation = daoA.readAuthToken(userInfo.getAuthToken());
+        String username = userInformation.username();
+
+        //Validatin Auth Token
+        if(!authTokenValidation(userInfo)){
+            errorMessage(session,"Invalid Auth token");
+        }
+        //Validating User
+        if(!playerValidation(userInfo)){
+            errorMessage(session,"Observers can not make a move");
+        }
+        //Game validation
+        if(!gameValidation(userInfo)){
+            errorMessage(session,"Game is over");
+        }
+        //Turn Validation
+        if(!turnValidation(userInfo)){
+            errorMessage(session,"Incorrect Turn");
+        }
+
+        //Chess Logic
+        ChessMove move = userInfo.getMove();
+        //Game from data Base
+        DAOGamesInterface daoGame = new MySQLGames();
+        GameData game = daoGame.readGame(userInfo.getGameID());
+
+        try{
+            game.game().makeMove(move);
+        }catch (InvalidMoveException e){
+            errorMessage(session,"Invalid Move");
+        }
+
+        //Sending Notification
+        String msg = username + " resigned";
+        NotificationMessage notificationMessage = new NotificationMessage(msg);
+        conections.broadcast(userInfo.getGameID(), null,notificationMessage);
+    }
+
+    //Helper functions
+    public void errorMessage(Session session, String message) throws IOException {
+        ErrorMessage msg = new ErrorMessage(message);
+        String errorMsg = new Gson().toJson(msg);
+        session.getRemote().sendString(errorMsg);
+    }
+
+    public boolean playerValidation(UserGameCommand userInfo) throws DataAccessException {
+        String authToken = userInfo.getAuthToken();
+        DAOAuthDataInterface daoA = new MySQLAuthData();
+        AuthData userInformation = daoA.readAuthToken(authToken);
+        String username = userInformation.username();
+        DAOGamesInterface daoGame = new MySQLGames();
+        GameData game = daoGame.readGame(userInfo.getGameID());
+        if(!Objects.equals(game.whiteUsername(), username) && !Objects.equals(game.blackUsername(), username)){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean gameValidation(UserGameCommand userInfo) throws DataAccessException {
+        DAOGamesInterface daoGame = new MySQLGames();
+        GameData game = daoGame.readGame(userInfo.getGameID());
+        if(game.game().isGameOver()){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean authTokenValidation(UserGameCommand userInfo) throws DataAccessException {
+        String authToken = userInfo.getAuthToken();
+        DAOAuthDataInterface dao = new MySQLAuthData();
+        AuthData info = dao.readAuthToken(authToken);
+        //Validating Auth token
+        if (info == null){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean turnValidation(UserGameCommand userInfo) throws DataAccessException {
+        DAOGamesInterface daoGame = new MySQLGames();
+        DAOAuthDataInterface daoA = new MySQLAuthData();
+        GameData game = daoGame.readGame(userInfo.getGameID());
+        AuthData userInformation = daoA.readAuthToken(userInfo.getAuthToken());
+        String username = userInformation.username();
+        ChessGame.TeamColor color;
+        //Comparing usernames instead of colors
+        if(Objects.equals(game.blackUsername(), username)){
+            color = ChessGame.TeamColor.BLACK;
+        }else{
+            color = ChessGame.TeamColor.WHITE;
+        }
+        if(game.game().getTeamTurn() != color){
+            return false;
+        }
+        return true;
+    }
+
 }
