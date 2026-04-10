@@ -1,7 +1,6 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
+import chess.*;
 import model.*;
 import server.Notify;
 import server.ServerFacade;
@@ -10,29 +9,29 @@ import server.WebsocketFacade;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
-
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ChessClient implements Notify {
     private State state = State.SIGNEDOUT;
     ServerFacade server;
     AuthData userInfo;
-    ChessBoard board = new ChessBoard();
+    ChessBoard boardGame = new ChessBoard();
     BoardPrinter boardPrinter = new BoardPrinter();
     ListOfGamesResult gameslist;
     WebsocketFacade webSocket;
     int unGameId;
     ChessGame.TeamColor uColor;
+    private Scanner scanner = new Scanner(System.in);
 
 
 
 
     public ChessClient(String serverUrl) throws ResponseException{
         server = new ServerFacade(serverUrl);
-        board.resetBoard();
+        boardGame.resetBoard();
         try{
             webSocket= new WebsocketFacade(this);
         }catch (Exception e){
@@ -45,7 +44,6 @@ public class ChessClient implements Notify {
         System.out.print(help());
 
         //Reading the input
-        Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals("quit")){
             printPrompt();
@@ -96,10 +94,9 @@ public class ChessClient implements Notify {
                         case "h","help" -> help();
                         case "rd","redraw" -> redrawBoard();
                         case "l","leave" -> leave();
-                        case "mk","move" -> makeMove();
+                        case "mk","move" -> makeMove(params);
                         case "rs","resign" -> resign();
-                        case "lm","Higlight" -> highlightMoves();
-
+                        case "lm","highlight" -> highlightMoves();
                         default -> help();
                     };
             };
@@ -185,12 +182,11 @@ public class ChessClient implements Notify {
             uColor = color.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
             JoinRequest joinRequest = new JoinRequest(color,gameId);
             server.joinGame(joinRequest,userInfo.authToken());
-            //System.out.println(boardPrinter.draw(board,uColor));
+            webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
         }catch (NumberFormatException e){
             throw new ResponseException("Make sure to input a number for Game ID");
         }
             state = State.GAMEPLAY;
-        webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
         return "Successfully joined game";
     }
 
@@ -204,7 +200,7 @@ public class ChessClient implements Notify {
                 int userId = Integer.parseInt(gameID);
                 for (GameData game: gameslist.games()){
                     if (game.gameID() == userId){
-                        System.out.println(boardPrinter.draw(board, ChessGame.TeamColor.WHITE));
+                        System.out.println(boardPrinter.draw(boardGame, ChessGame.TeamColor.WHITE));
                         //webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
                         return "Successfully you are now watching a game";
                     }
@@ -219,9 +215,7 @@ public class ChessClient implements Notify {
 
     public String logout()throws ResponseException{
         assertSignedIn();
-        //Call function from serverFacade
         server.logout(userInfo.authToken());
-        //Updatind the state
         state = State.SIGNEDOUT;
         return "Logged out successfully";
 
@@ -234,6 +228,16 @@ public class ChessClient implements Notify {
       return result;
     };
 
+    //Helper map for make Move and legal moves.
+    public Map<Character,Integer> charsNums = Map.of(
+        'a',1,
+        'b',2,
+        'c',3,
+        'd',4,
+        'e',5,
+        'f',6,
+        'g',7,
+        'h',8);
 
     //INGAME
 
@@ -261,18 +265,67 @@ public class ChessClient implements Notify {
     }
 
     private String makeMove(String...params) {
-//        String start = params[1];
-//        String end = params[2];
-//        for(int i = 0; i<start.length();i++){
-//            if(i == )
-//        }
-//
-//        return "Test";
-        return null;
+        if(!(params.length == 2)){
+            System.out.println("You need <Command> <start position> <end position>");
+        }
+        String start = params[0];
+        String end = params[1];
+        ChessMove move;
+        ChessPosition sPosition;
+        ChessPosition ePosition;
+        int rowStart;
+        int colStart;
+        int rowEnd;
+        int colEnd;
+
+
+        if(start.length() == 2 && end.length() == 2){
+            //Checking if it is a char and if char is in map
+            if(charsNums.containsKey(start.charAt(0)) && charsNums.containsKey(end.charAt(0))){
+                    if(Character.isDigit(start.charAt(1)) && Character.isDigit(end.charAt(1))){
+                        //Starting Position
+                            colStart = charsNums.get(start.charAt(0));
+                            rowStart = Integer.parseInt(String.valueOf(start.charAt(1)));
+                            sPosition = new ChessPosition(rowStart,colStart);
+                        // End position
+                            colEnd = charsNums.get(end.charAt(0));
+                            rowEnd = Integer.parseInt(String.valueOf(end.charAt(1)));
+                            ePosition = new ChessPosition(rowEnd,colEnd);
+                            ChessPiece.PieceType promotionType = null;
+                            ChessPiece.PieceType pieceType = boardGame.getPiece(sPosition).getPieceType();
+                            //Promotion
+                            if((rowEnd == 1 || rowEnd == 8) && (pieceType == ChessPiece.PieceType.PAWN)){
+                                System.out.println("Which piece type do you want for promotion?");
+                                printPrompt();
+                                String promotion = scanner.nextLine().toLowerCase();
+                                //Validating the input
+                                switch (promotion){
+                                    case "queen" -> promotionType = ChessPiece.PieceType.QUEEN;
+                                    case "knight" -> promotionType = ChessPiece.PieceType.KNIGHT;
+                                    case "bishop"-> promotionType = ChessPiece.PieceType.BISHOP;
+                                    case "rook"-> promotionType = ChessPiece.PieceType.ROOK;
+                                    default -> System.out.println("Acceptable input: queen,knight,bishop,rook");
+                                }
+                            }
+                            // Creating Chess move
+                            move = new ChessMove(sPosition,ePosition,promotionType);
+                            //Updating my board
+                            webSocket.makeMove(userInfo.authToken(),unGameId,move);
+
+                }else{
+                        System.out.println("An Integer is required after letter -> <LETTER><NUMBER>");
+                    }
+            }else{
+                System.out.println("Character is required as first element <LETTER><NUMBER>");
+            }
+        }else{
+            System.out.println("You need a <LETTER><NUMBER> for Starting Position & for End Position");
+        }
+        return "You made a move";
     }
 
     private String redrawBoard() {
-        System.out.println(boardPrinter.draw(board,uColor));
+        System.out.println(boardPrinter.draw(boardGame,uColor));
         return "Current Board";
     }
 
@@ -304,7 +357,7 @@ public class ChessClient implements Notify {
                     Help: "h", "help"
                     Redraw Chess board: "rd", "redraw"
                     Leave: "l", "leave"
-                    Make move: "mk", "move" <Start Poistion> <End Position>
+                    Make move: "mk", "move" <Start Position> <End Position>
                     Resign: "r", "resign"
                     Legal move: "lm","highlight"
                     """;
@@ -337,8 +390,9 @@ public class ChessClient implements Notify {
 
     @Override
     public void notifyLoadGame(LoadMessage game) {
-        ChessGame currentGame = game.game;
+        boardGame = game.game.getBoard();
         System.out.println("\n");
-        System.out.println(boardPrinter.draw(currentGame.getBoard(),uColor));
+        System.out.println(boardPrinter.draw(boardGame,uColor));
+        printPrompt();
     }
 }

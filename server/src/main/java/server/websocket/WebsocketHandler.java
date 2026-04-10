@@ -61,7 +61,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String errorMsg = new Gson().toJson(msg);
             session.getRemote().sendString(errorMsg);
         }
-        //Getting the username
+        //Getting the username color
         String username = info.username();
         conections.add(gameId,username,session);
 
@@ -78,16 +78,16 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             LoadMessage lgMessage = new LoadMessage(game);
             String message = new Gson().toJson(lgMessage);
             session.getRemote().sendString(message);
-
             //Notification
             String notificationMsg;
-            if(Objects.equals(username, " white")){
+            if(Objects.equals(username, gameData.whiteUsername())){
                 notificationMsg = username + " joined as white";
-            } else if (Objects.equals(username, " black")) {
+            } else if (Objects.equals(username, gameData.blackUsername())) {
                 notificationMsg = username + " joined as black";
             }else{
                 notificationMsg = username + " joined as an observer";
             }
+
             NotificationMessage notification = new NotificationMessage(notificationMsg);
             conections.broadcast(gameId,session,notification);
         }
