@@ -12,6 +12,7 @@ import websocket.messages.LoadMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -23,6 +24,9 @@ public class ChessClient implements Notify {
     BoardPrinter boardPrinter = new BoardPrinter();
     ListOfGamesResult gameslist;
     WebsocketFacade webSocket;
+    int unGameId;
+    ChessGame.TeamColor uColor;
+
 
 
 
@@ -176,8 +180,9 @@ public class ChessClient implements Notify {
         String gameID = params[0];
         try{
             Integer gameId = Integer.parseInt(gameID);
+            unGameId = gameId;
             String color = params[1].toUpperCase();
-            ChessGame.TeamColor uColor = color.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            uColor = color.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
             JoinRequest joinRequest = new JoinRequest(color,gameId);
             server.joinGame(joinRequest,userInfo.authToken());
             System.out.println(boardPrinter.draw(board,uColor));
@@ -185,6 +190,7 @@ public class ChessClient implements Notify {
             throw new ResponseException("Make sure to input a number for Game ID");
         }
             state = State.GAMEPLAY;
+        webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
         return "Successfully joined game";
     }
 
@@ -232,6 +238,11 @@ public class ChessClient implements Notify {
     //INGAME
 
     public String leave(){
+        try{
+            webSocket.leave(userInfo.authToken(), unGameId);
+        }catch (IOException e){
+            System.out.println("Error when leaving");
+        }
         state = State.SIGNEDIN;
         return "Back to home";
     }
@@ -240,16 +251,29 @@ public class ChessClient implements Notify {
         return "Test";
     }
 
-    private String resign() {
-        return "Test";
+    private String resign(){
+        try{
+            webSocket.resign(userInfo.authToken(), unGameId);
+        }catch (IOException e){
+            System.out.println("Error when resign");
+        }
+        return "You resigned from the game";
     }
 
-    private String makeMove() {
-        return "Test";
+    private String makeMove(String...params) {
+//        String start = params[1];
+//        String end = params[2];
+//        for(int i = 0; i<start.length();i++){
+//            if(i == )
+//        }
+//
+//        return "Test";
+        return null;
     }
 
     private String redrawBoard() {
-        return "Test";
+        System.out.println(boardPrinter.draw(board,uColor));
+        return "Current Board";
     }
 
 
@@ -314,5 +338,6 @@ public class ChessClient implements Notify {
     @Override
     public void notifyLoadGame(LoadMessage game) {
 
+        System.out.println(boardPrinter.draw(board,uColor));
     }
 }
