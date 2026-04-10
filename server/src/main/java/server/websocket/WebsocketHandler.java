@@ -12,16 +12,12 @@ import io.javalin.websocket.WsMessageContext;
 import io.javalin.websocket.WsMessageHandler;
 import model.AuthData;
 import model.GameData;
-import model.JoinRequest;
-import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.Objects;

@@ -3,24 +3,37 @@ package client;
 import chess.ChessBoard;
 import chess.ChessGame;
 import model.*;
+import server.Notify;
 import server.ServerFacade;
 import networking.ResponseException;
+import server.WebsocketFacade;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class ChessClient {
+public class ChessClient implements Notify {
     private State state = State.SIGNEDOUT;
     ServerFacade server;
     AuthData userInfo;
     ChessBoard board = new ChessBoard();
     BoardPrinter boardPrinter = new BoardPrinter();
     ListOfGamesResult gameslist;
+    WebsocketFacade webSocket;
+
 
 
     public ChessClient(String serverUrl) throws ResponseException{
         server = new ServerFacade(serverUrl);
         board.resetBoard();
+        try{
+            webSocket= new WebsocketFacade(this);
+        }catch (Exception e){
+            System.out.println("Something went wrong with Websocket");
+        }
     }
 
     public void run(){
@@ -77,7 +90,12 @@ public class ChessClient {
                 case GAMEPLAY ->
                     switch (cmd){
                         case "h","help" -> help();
+                        case "rd","redraw" -> redrawBoard();
                         case "l","leave" -> leave();
+                        case "mk","move" -> makeMove();
+                        case "rs","resign" -> resign();
+                        case "lm","Higlight" -> highlightMoves();
+
                         default -> help();
                     };
             };
@@ -85,6 +103,7 @@ public class ChessClient {
             return ex.getMessage();
         }
     }
+
 
     //SIGNEDOUT METHODS
     public String login(String... params) throws ResponseException {
@@ -180,6 +199,7 @@ public class ChessClient {
                 for (GameData game: gameslist.games()){
                     if (game.gameID() == userId){
                         System.out.println(boardPrinter.draw(board, ChessGame.TeamColor.WHITE));
+                        //webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
                         return "Successfully you are now watching a game";
                     }
                 }
@@ -216,6 +236,22 @@ public class ChessClient {
         return "Back to home";
     }
 
+    private String highlightMoves() {
+        return "Test";
+    }
+
+    private String resign() {
+        return "Test";
+    }
+
+    private String makeMove() {
+        return "Test";
+    }
+
+    private String redrawBoard() {
+        return "Test";
+    }
+
 
     public String help() {
         if (state == State.SIGNEDOUT) {
@@ -242,11 +278,11 @@ public class ChessClient {
             return """
                     Options:
                     Help: "h", "help"
-                    Redraw Chess board: "rb", "redraw"
+                    Redraw Chess board: "rd", "redraw"
                     Leave: "l", "leave"
-                    Make move: "mk"
+                    Make move: "mk", "move" <Start Poistion> <End Position>
                     Resign: "r", "resign"
-                    Legal move: "lm"
+                    Legal move: "lm","highlight"
                     """;
         }
         return """
@@ -262,5 +298,21 @@ public class ChessClient {
         if (state == State.SIGNEDOUT) {
             throw new ResponseException("You must sign in");
         }
+    }
+
+
+    @Override
+    public void notifyError(ErrorMessage message) {
+        System.out.println(message.errorMessage);
+    }
+
+    @Override
+    public void notifyNotification(NotificationMessage message) {
+        System.out.println(message.message);
+    }
+
+    @Override
+    public void notifyLoadGame(LoadMessage game) {
+
     }
 }
