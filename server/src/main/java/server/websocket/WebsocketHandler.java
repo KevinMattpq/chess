@@ -81,12 +81,12 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
             //Notification
             String notificationMsg;
-            if(Objects.equals(username, "white")){
-                notificationMsg = username + "joined as white";
-            } else if (Objects.equals(username, "black")) {
-                notificationMsg = username + "joined as black";
+            if(Objects.equals(username, " white")){
+                notificationMsg = username + " joined as white";
+            } else if (Objects.equals(username, " black")) {
+                notificationMsg = username + " joined as black";
             }else{
-                notificationMsg = username + "joined as an observer";
+                notificationMsg = username + " joined as an observer";
             }
             NotificationMessage notification = new NotificationMessage(notificationMsg);
             conections.broadcast(gameId,session,notification);

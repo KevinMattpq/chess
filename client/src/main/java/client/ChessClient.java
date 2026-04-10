@@ -185,7 +185,7 @@ public class ChessClient implements Notify {
             uColor = color.equals("WHITE") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
             JoinRequest joinRequest = new JoinRequest(color,gameId);
             server.joinGame(joinRequest,userInfo.authToken());
-            System.out.println(boardPrinter.draw(board,uColor));
+            //System.out.println(boardPrinter.draw(board,uColor));
         }catch (NumberFormatException e){
             throw new ResponseException("Make sure to input a number for Game ID");
         }
@@ -337,7 +337,8 @@ public class ChessClient implements Notify {
 
     @Override
     public void notifyLoadGame(LoadMessage game) {
-
-        System.out.println(boardPrinter.draw(board,uColor));
+        ChessGame currentGame = game.game;
+        System.out.println("\n");
+        System.out.println(boardPrinter.draw(currentGame.getBoard(),uColor));
     }
 }
