@@ -278,7 +278,7 @@ public class ChessClient implements Notify {
                     legalMoves.stream().map(ChessMove::getEndPosition).collect(Collectors.toCollection(ArrayList::new))));
             }
         }
-        return null;
+        return "Success";
     }
 
     private String resign(){
