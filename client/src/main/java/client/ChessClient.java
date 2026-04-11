@@ -325,13 +325,7 @@ public class ChessClient implements Notify {
                                 printPrompt();
                                 String promotion = scanner.nextLine().toLowerCase();
                                 //Validating the input
-                                switch (promotion){
-                                    case "queen" -> promotionType = ChessPiece.PieceType.QUEEN;
-                                    case "knight" -> promotionType = ChessPiece.PieceType.KNIGHT;
-                                    case "bishop"-> promotionType = ChessPiece.PieceType.BISHOP;
-                                    case "rook"-> promotionType = ChessPiece.PieceType.ROOK;
-                                    default -> System.out.println("Acceptable input: queen,knight,bishop,rook");
-                                }
+                                promotionType = promotionType(promotion);
                             }
                             // Creating Chess move
                             move = new ChessMove(sPosition,ePosition,promotionType);
@@ -348,6 +342,21 @@ public class ChessClient implements Notify {
             System.out.println("You need a <LETTER><NUMBER> for Starting Position & for End Position");
         }
         return "You made a move";
+    }
+    public ChessPiece.PieceType promotionType(String ptype){
+        ChessPiece.PieceType promotionPiece = null;
+        if (Objects.equals(ptype, "queen")){
+            promotionPiece = ChessPiece.PieceType.QUEEN;
+        } else if ("knight".equals(ptype)) {
+            promotionPiece = ChessPiece.PieceType.KNIGHT;
+        } else if ("bishop".equals(ptype)) {
+            promotionPiece = ChessPiece.PieceType.BISHOP;
+        } else if ("rook".equals(ptype)) {
+            promotionPiece = ChessPiece.PieceType.ROOK;
+        }else{
+            System.out.println("Acceptable input: queen,knight,bishop,rook");
+        }
+        return promotionPiece;
     }
 
     private String redrawBoard() {
