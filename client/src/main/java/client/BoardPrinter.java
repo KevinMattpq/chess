@@ -1,10 +1,10 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import ui.EscapeSequences;
+
+import java.util.Collection;
+import java.util.List;
 
 public class BoardPrinter {
 
@@ -37,7 +37,7 @@ public class BoardPrinter {
         return row.toString();
     }
 
-    public String printRow(ChessBoard board, ChessGame.TeamColor color, Integer rowNumUser){
+    public String printRow(ChessBoard board, ChessGame.TeamColor color, Integer rowNumUser, Collection<ChessPosition> endPositions){
         String rowNum = rowNumUser.toString();
         //This will hold the final row
         StringBuilder row = new StringBuilder();
@@ -49,24 +49,35 @@ public class BoardPrinter {
         if(color == ChessGame.TeamColor.WHITE){
             for(int col = 1;col < 9; col++){
                 ChessPosition position = new ChessPosition(rowNumUser,col);
+                boolean toHighlight = endPositions.contains(position);
                 ChessPiece piece = board.getPiece(position);
                 if ((rowNumUser + col) % 2 != 0){
+                    if(toHighlight){
+                        row.append(EscapeSequences.SET_BG_COLOR_GREEN);
+                    }else{
+                        row.append(EscapeSequences.SET_BG_COLOR_WHITE);
+                    }
                     if(piece == null ){
-                        row.append(EscapeSequences.SET_BG_COLOR_WHITE).append("   ");
+                        row.append("   ");
                     }else{
                         String pieceLetter = pieceLetter(piece);
-                        row.append(EscapeSequences.SET_BG_COLOR_WHITE).append(" ");
+                        row.append(" ");
                         row.append(EscapeSequences.SET_TEXT_COLOR_BLUE);
                         row.append(pieceLetter);
                         row.append(" ");
                         row.append(EscapeSequences.RESET_TEXT_COLOR);
                     }
                 }else{
+                    if(toHighlight){
+                        row.append(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+                    }else{
+                        row.append(EscapeSequences.SET_BG_COLOR_BLACK);
+                    }
                     if(piece == null){
-                        row.append(EscapeSequences.SET_BG_COLOR_BLACK).append("   ");
+                        row.append("   ");
                     }else{
                         String pieceLetter = pieceLetter(piece);
-                        row.append(EscapeSequences.SET_BG_COLOR_BLACK).append(" ");
+                        row.append(" ");
                         row.append(EscapeSequences.SET_TEXT_COLOR_BLUE);
                         row.append(pieceLetter);
                         row.append(" ");
@@ -77,24 +88,35 @@ public class BoardPrinter {
         }else{
             for(int col = 8;col > 0; col--){
                 ChessPosition position = new ChessPosition(rowNumUser,col);
+                boolean toHighlight = endPositions.contains(position);
                 ChessPiece piece = board.getPiece(position);
                 if ((rowNumUser + col) % 2 != 0){
+                    if(toHighlight){
+                        row.append(EscapeSequences.SET_BG_COLOR_GREEN);
+                    }else{
+                        row.append(EscapeSequences.SET_BG_COLOR_WHITE);
+                    }
                     if(piece == null ){
-                        row.append(EscapeSequences.SET_BG_COLOR_WHITE).append("   ");
+                        row.append("   ");
                     }else{
                         String pieceLetter = pieceLetter(piece);
-                        row.append(EscapeSequences.SET_BG_COLOR_WHITE).append(" ");
+                        row.append(" ");
                         row.append(EscapeSequences.SET_TEXT_COLOR_BLUE);
                         row.append(pieceLetter);
                         row.append(" ");
                         row.append(EscapeSequences.RESET_TEXT_COLOR);
                     }
                 }else{
-                    if(piece == null){
-                        row.append(EscapeSequences.SET_BG_COLOR_BLACK).append("   ");
+                    if(toHighlight){
+                        row.append(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+                    }else{
+                        row.append(EscapeSequences.SET_BG_COLOR_BLACK);
+                    }
+                    if(piece == null ){
+                        row.append("   ");
                     }else{
                         String pieceLetter = pieceLetter(piece);
-                        row.append(EscapeSequences.SET_BG_COLOR_BLACK).append(" ");
+                        row.append(" ");
                         row.append(EscapeSequences.SET_TEXT_COLOR_BLUE);
                         row.append(pieceLetter);
                         row.append(" ");
@@ -138,17 +160,20 @@ public class BoardPrinter {
         return letter;
     }
 
-    public String draw(ChessBoard board, ChessGame.TeamColor color){
+    public String draw(ChessBoard board, ChessGame.TeamColor color) {
+        return draw(board,color, List.of());
+    }
+    public String draw(ChessBoard board, ChessGame.TeamColor color, Collection<ChessPosition> endPositions){
         StringBuilder rowResult = new StringBuilder();
         String  resultHeader = printHeader(color);
         if(color == ChessGame.TeamColor.WHITE){
             for(int i = 8; i>0;i-- ){
-                rowResult.append(printRow(board,color,i));
+                rowResult.append(printRow(board,color,i,endPositions));
                 rowResult.append("\n");
             }
         }else{
             for(int i = 1; i< 9;i++ ){
-                rowResult.append(printRow(board,color,i));
+                rowResult.append(printRow(board,color,i,endPositions));
                 rowResult.append("\n");
             }
         }

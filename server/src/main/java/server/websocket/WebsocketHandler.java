@@ -1,6 +1,7 @@
 package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
@@ -20,6 +21,7 @@ import websocket.messages.LoadMessage;
 import websocket.messages.NotificationMessage;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
@@ -156,6 +158,16 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         conections.broadcast(gameId,null,notificationMessage);
 
     }
+    public Map<Integer,String> numsChar = Map.of(
+            1,"a",
+            2,"b",
+            3,"c",
+            4,"d",
+            5,"e",
+            6,"f",
+            7,"g",
+            8,"h");
+
 
     public void makeMove(MakeMoveCommand userInfo, Session session) throws IOException, DataAccessException, InvalidMoveException {
         //Validatin Auth Token
@@ -197,9 +209,19 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         //Updating game
         daoGame.updateGame(gameData);
+        //Info to let the user know where the other user moved
+        ChessPosition startingPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        int sRow = startingPosition.getRow();
+        int sCol = startingPosition.getColumn();
+        int eRow = endPosition.getRow();
+        int ecol = endPosition.getColumn();
+
+        String sR = numsChar.get(sCol);
+        String eR = numsChar.get(ecol);
 
         //Sending Notification
-        String msg = username + " Move";
+        String msg = username + " move from "+sR+sRow +" to "+eR+eRow;
         NotificationMessage notificationMessage = new NotificationMessage(msg);
         conections.broadcast(userInfo.getGameID(), session,notificationMessage);
 
@@ -217,6 +239,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             conections.broadcast(userInfo.getGameID(), null,notificationMessage2);
         }
     }
+
 
     //Helper functions
     public void errorMessage(Session session, String message) throws IOException {

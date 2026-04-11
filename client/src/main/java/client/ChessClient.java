@@ -10,9 +10,8 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadMessage;
 import websocket.messages.NotificationMessage;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChessClient implements Notify {
     private State state = State.SIGNEDOUT;
@@ -96,7 +95,7 @@ public class ChessClient implements Notify {
                         case "l","leave" -> leave();
                         case "mk","move" -> makeMove(params);
                         case "rs","resign" -> resign();
-                        case "lm","highlight" -> highlightMoves();
+                        case "lm","valid" -> highlightMoves();
                         default -> help();
                     };
             };
@@ -252,6 +251,27 @@ public class ChessClient implements Notify {
     }
 
     private String highlightMoves() {
+        //Variables
+        int rowS;
+        int colS;
+        ChessPosition hPosition;
+        Collection<ChessMove> legalMoves;
+
+        System.out.println("Input the starting position of the piece that you want to know the valid moves <LETTER><NUMBER>");
+        printPrompt();
+        String location = scanner.nextLine().toLowerCase();
+        if(charsNums.containsKey(location.charAt(0))){
+            if(Character.isDigit(location.charAt(1))){
+                colS = charsNums.get(location.charAt(0));
+                rowS = Integer.parseInt(String.valueOf(location.charAt(1)));
+                hPosition = new ChessPosition(rowS,colS);
+                ChessGame game = new ChessGame();
+                legalMoves = game.validMoves(hPosition);
+                System.out.println(boardPrinter.draw(boardGame,uColor,
+                    legalMoves.stream().map(ChessMove::getEndPosition).collect(Collectors.toCollection(ArrayList::new))));
+            }
+        }
+
         return "Test";
     }
 
