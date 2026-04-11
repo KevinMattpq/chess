@@ -207,8 +207,6 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             errorMessage(session,"Invalid Move");
             return;
         }
-
-
         //Updating game
         daoGame.updateGame(gameData);
         //Info to let the user know where the other user moved
@@ -230,7 +228,6 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         //Sending Load Game
         LoadMessage newGame = new LoadMessage(game);
         conections.broadcast(userInfo.getGameID(), null,newGame);
-        // if Jaquemate  depues elsif Check jaque
         //Check Mate
         if(game.isInCheckmate(game.getTeamTurn())){
             game.gameState = true;
