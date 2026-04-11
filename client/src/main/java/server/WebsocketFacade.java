@@ -34,7 +34,7 @@ public class WebsocketFacade extends Endpoint {
                 if(sMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
                     messageLoadGame(message);
                 }
-                System.out.println(message);
+                //System.out.println(message);
             }
         });
     }

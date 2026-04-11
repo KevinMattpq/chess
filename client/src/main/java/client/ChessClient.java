@@ -98,6 +98,13 @@ public class ChessClient implements Notify {
                         case "lm","valid" -> highlightMoves();
                         default -> help();
                     };
+                case OBSERVER ->
+                    switch (cmd){
+                        case "rd","redraw" -> redrawBoard();
+                        case "l","leave" -> leave();
+                        case "h","help" -> help();
+                        default -> help();
+                    };
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -199,8 +206,8 @@ public class ChessClient implements Notify {
                 int userId = Integer.parseInt(gameID);
                 for (GameData game: gameslist.games()){
                     if (game.gameID() == userId){
-                        System.out.println(boardPrinter.draw(boardGame, ChessGame.TeamColor.WHITE));
-                        //webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
+                        webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
+                        state = State.OBSERVER;
                         return "Successfully you are now watching a game";
                     }
                 }
@@ -271,8 +278,7 @@ public class ChessClient implements Notify {
                     legalMoves.stream().map(ChessMove::getEndPosition).collect(Collectors.toCollection(ArrayList::new))));
             }
         }
-
-        return "Test";
+        return null;
     }
 
     private String resign(){
@@ -380,6 +386,15 @@ public class ChessClient implements Notify {
                     Make move: "mk", "move" <Start Position> <End Position>
                     Resign: "r", "resign"
                     Legal move: "lm","highlight"
+                    """;
+        }
+
+        if(state == State.OBSERVER){
+            return """
+                    Options:
+                    Redraw Chess board: "rd", "redraw"
+                    Leave: "l", "leave"
+                    Help: "h", "help"
                     """;
         }
         return """
