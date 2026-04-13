@@ -19,11 +19,20 @@ public class ConnectionManager {
             this.session = session;
             this.gameId = gameId;
         }
+        public Session getSession(){ return session;}
     }
 
     public final ConcurrentHashMap<Connection, Integer> connections = new ConcurrentHashMap<>();
-
     public HashMap<String,Session> userInfo = new HashMap();
+
+    public boolean sessionPresent(Session session){
+        for(Connection connection: connections.keySet()){
+            if(connection.getSession().equals(session)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void add(Integer gameId, String username, Session session) {
         if(!connections.containsKey(gameId)){

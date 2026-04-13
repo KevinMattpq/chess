@@ -101,6 +101,7 @@ public class ChessClient implements Notify {
                 case OBSERVER ->
                     switch (cmd){
                         case "rd","redraw" -> redrawBoard();
+                        case "lm","valid" -> highlightMoves();
                         case "l","leave" -> leave();
                         case "h","help" -> help();
                         default -> help();
@@ -206,6 +207,7 @@ public class ChessClient implements Notify {
                 int userId = Integer.parseInt(gameID);
                 for (GameData game: gameslist.games()){
                     if (game.gameID() == userId){
+                        unGameId = userId;
                         webSocket.connect(userInfo.authToken(), Integer.parseInt(gameID));
                         state = State.OBSERVER;
                         return "Successfully you are now watching a game";
@@ -402,6 +404,7 @@ public class ChessClient implements Notify {
             return """
                     Options:
                     Redraw Chess board: "rd", "redraw"
+                    Legal moves: "lm","valid"
                     Leave: "l", "leave"
                     Help: "h", "help"
                     """;

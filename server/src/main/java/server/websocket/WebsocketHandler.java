@@ -100,25 +100,32 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String authToken = userInfo.getAuthToken();
         DAOAuthDataInterface daoAuth = new MySQLAuthData();
         AuthData info = daoAuth.readAuthToken(authToken);
+        //Authtoken Validation
         if (info == null){
             errorMessage(session,"Error: Auth token is null");
         }
-        assert info != null;
-        String username = info.username();
+        //Session Validation
+        if(!conections.sessionPresent(session)){
+            System.out.println("Error not in session");
+            return;
+        }
         int gameId = userInfo.getGameID();
+        String username = info.username();
+        if(gameId != 0){
+            DAOGamesInterface daoGame = new MySQLGames();
+            GameData game = daoGame.readGame(userInfo.getGameID());
 
-        DAOGamesInterface daoGame = new MySQLGames();
-        GameData game = daoGame.readGame(userInfo.getGameID());
-
-        if (Objects.equals(game.whiteUsername(), username) || Objects.equals(game.blackUsername(), username)){
-            if(Objects.equals(game.whiteUsername(), username)){
-                game = new GameData(userInfo.getGameID(), null, game.blackUsername(), game.gameName(), game.game());
-                daoGame.updateGame(game);
-            }else{
-                game = new GameData(userInfo.getGameID(), game.whiteUsername(), null, game.gameName(), game.game());
-                daoGame.updateGame(game);
+            if (Objects.equals(game.whiteUsername(), username) || Objects.equals(game.blackUsername(), username)){
+                if(Objects.equals(game.whiteUsername(), username)){
+                    game = new GameData(userInfo.getGameID(), null, game.blackUsername(), game.gameName(), game.game());
+                    daoGame.updateGame(game);
+                }else{
+                    game = new GameData(userInfo.getGameID(), game.whiteUsername(), null, game.gameName(), game.game());
+                    daoGame.updateGame(game);
+                }
             }
         }
+
         //Removing connection
         conections.remove(session);
         //Sending Notification
@@ -204,7 +211,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try{
             game.makeMove(move);
         }catch (InvalidMoveException e){
-            errorMessage(session,"Invalid Move");
+            errorMessage(session,"Invalid Move Try Again");
             return;
         }
         //Updating game
