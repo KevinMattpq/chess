@@ -238,10 +238,17 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             game.gameState = true;
             daoGame.updateGame(gameData);
             //Sending Notification
-            String msg2 = "Game Over";
-            NotificationMessage notificationMessage2 = new NotificationMessage(msg);
+            String msg2 = username + " is Check Mate Game Over";
+            NotificationMessage notificationMessage2 = new NotificationMessage(msg2);
             conections.broadcast(userInfo.getGameID(), null,notificationMessage2);
+        } else if(game.isInCheck(game.getTeamTurn())){
+            daoGame.updateGame(gameData);
+            //Sending Notification
+            String msg1 = username + " king is in Check";
+            NotificationMessage notificationMessage1 = new NotificationMessage(msg1);
+            conections.broadcast(userInfo.getGameID(), null,notificationMessage1);
         }
+
     }
 
 

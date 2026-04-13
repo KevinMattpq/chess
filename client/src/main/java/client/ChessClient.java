@@ -17,7 +17,7 @@ public class ChessClient implements Notify {
     private State state = State.SIGNEDOUT;
     ServerFacade server;
     AuthData userInfo;
-    ChessBoard boardGame = new ChessBoard();
+    ChessGame boardGame = new ChessGame();
     BoardPrinter boardPrinter = new BoardPrinter();
     ListOfGamesResult gameslist;
     WebsocketFacade webSocket;
@@ -30,7 +30,6 @@ public class ChessClient implements Notify {
 
     public ChessClient(String serverUrl) throws ResponseException{
         server = new ServerFacade(serverUrl);
-        boardGame.resetBoard();
         try{
             webSocket= new WebsocketFacade(this);
         }catch (Exception e){
@@ -274,9 +273,8 @@ public class ChessClient implements Notify {
                 colS = charsNums.get(location.charAt(0));
                 rowS = Integer.parseInt(String.valueOf(location.charAt(1)));
                 hPosition = new ChessPosition(rowS,colS);
-                ChessGame game = new ChessGame();
-                legalMoves = game.validMoves(hPosition);
-                System.out.println(boardPrinter.draw(boardGame,uColor,
+                legalMoves = boardGame.validMoves(hPosition);
+                System.out.println(boardPrinter.draw(boardGame.getBoard(),uColor,
                     legalMoves.stream().map(ChessMove::getEndPosition).collect(Collectors.toCollection(ArrayList::new))));
             }
         }
@@ -320,7 +318,7 @@ public class ChessClient implements Notify {
                             rowEnd = Integer.parseInt(String.valueOf(end.charAt(1)));
                             ePosition = new ChessPosition(rowEnd,colEnd);
                             ChessPiece.PieceType promotionType = null;
-                            ChessPiece.PieceType pieceType = boardGame.getPiece(sPosition).getPieceType();
+                            ChessPiece.PieceType pieceType = boardGame.getBoard().getPiece(sPosition).getPieceType();
                             //Promotion
                             if((rowEnd == 1 || rowEnd == 8) && (pieceType == ChessPiece.PieceType.PAWN)){
                                 System.out.println("Which piece type do you want for promotion?");
@@ -362,7 +360,7 @@ public class ChessClient implements Notify {
     }
 
     private String redrawBoard() {
-        System.out.println(boardPrinter.draw(boardGame,uColor));
+        System.out.println(boardPrinter.draw(boardGame.getBoard(),uColor));
         return "Current Board";
     }
 
@@ -437,9 +435,9 @@ public class ChessClient implements Notify {
 
     @Override
     public void notifyLoadGame(LoadMessage game) {
-        boardGame = game.game.getBoard();
+        boardGame = game.game;
         System.out.println("\n");
-        System.out.println(boardPrinter.draw(boardGame,uColor));
+        System.out.println(boardPrinter.draw(boardGame.getBoard(),uColor));
         printPrompt();
     }
 }
