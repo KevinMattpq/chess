@@ -111,18 +111,16 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         int gameId = userInfo.getGameID();
         String username = info.username();
-        if(gameId != 0){
-            DAOGamesInterface daoGame = new MySQLGames();
-            GameData game = daoGame.readGame(userInfo.getGameID());
+        DAOGamesInterface daoGame = new MySQLGames();
+        GameData game = daoGame.readGame(userInfo.getGameID());
 
-            if (Objects.equals(game.whiteUsername(), username) || Objects.equals(game.blackUsername(), username)){
-                if(Objects.equals(game.whiteUsername(), username)){
-                    game = new GameData(userInfo.getGameID(), null, game.blackUsername(), game.gameName(), game.game());
-                    daoGame.updateGame(game);
-                }else{
-                    game = new GameData(userInfo.getGameID(), game.whiteUsername(), null, game.gameName(), game.game());
-                    daoGame.updateGame(game);
-                }
+        if (Objects.equals(game.whiteUsername(), username) || Objects.equals(game.blackUsername(), username)){
+            if(Objects.equals(game.whiteUsername(), username)){
+                game = new GameData(userInfo.getGameID(), null, game.blackUsername(), game.gameName(), game.game());
+                daoGame.updateGame(game);
+            }else{
+                game = new GameData(userInfo.getGameID(), game.whiteUsername(), null, game.gameName(), game.game());
+                daoGame.updateGame(game);
             }
         }
 
